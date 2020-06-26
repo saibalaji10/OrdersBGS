@@ -1,7 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
 class Customer(models.Model):
     name = models.CharField('Customer Name', max_length=100)
     number = models.CharField('Contact Phone', max_length=20)
@@ -13,22 +12,37 @@ class Order(models.Model):
 
 
 class Category(models.Model):
-    category = models.CharField('Product Category', max_length=100)
+    name = models.CharField('Product Category', max_length=150, default='x')
+
+    def __str__(self):
+        return self.name
 
 
 class Attribute(models.Model):
     name = models.CharField('Product Attribute', max_length=150)
 
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField('Product Name', max_length=200)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    product_attribute = models.ManyToManyField(Attribute, related_name='product_attribute')
-    order = models.ManyToManyField(Order, through='OrderDetails')
+    product_attribute = models.ManyToManyField(Attribute, through='ProductAttribute')
+
+    def __str__(self):
+        return self.name
+
+
+class ProductAttribute(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.product.name + '-' + self.attribute.name)
 
 
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE, default='xy')
     quantity = models.IntegerField('Item Quantity')
