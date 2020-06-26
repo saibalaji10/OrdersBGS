@@ -5,10 +5,15 @@ from .models import Product, Order, Category, Attribute, Customer, OrderDetails,
 
 # Create your views here.
 def index(request):
-    category_list = Category.objects.order_by('name')
-    product_list = Product.objects.order_by('name')
-    attribute_list = Attribute.objects.order_by('name')
     pa_list = ProductAttribute.objects.all()
+
+    distinct_prod_list = pa_list.values_list('product').distinct()
+    product_list = Product.objects.filter(id__in=distinct_prod_list).order_by('name')
+
+    distinct_category_list = Product.objects.filter(id__in=distinct_prod_list).values_list('category').distinct()
+    category_list = Category.objects.filter(id__in=distinct_category_list).order_by('name')
+
+    attribute_list = Attribute.objects.order_by('name')
 
     print(product_list)
     print(category_list)

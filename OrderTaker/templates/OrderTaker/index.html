@@ -1,0 +1,128 @@
+{% extends 'OrderTaker/base.html' %}
+
+{% block content %}
+    {% if category_list %}
+        <div class="container" style="margin-top:30px">
+        <h3>Get Started</h3>
+        <p>
+            Choose from the shopping list to place your order at BGS.
+        </p>
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <div class="accordion" id="accordion">
+                    {% for category in category_list %}
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapse{{ forloop.counter }}"
+                                            aria-expanded="true" aria-controls="collapseOne">
+                                        {{ category.name }}
+                                    </button>
+                                </h5>
+                            </div>
+
+                            <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="headingOne"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for product in product_list %}
+                                            {% if product.category.name == category.name %}
+                                                <li class="list-group-item">{{ product.name }}
+                                                    {% for prod in pa_list %}
+                                                        {% if prod.product.name == product.name %}
+                                                            <span class="badge badge-info">
+                                                                {{ prod.attribute.name }}
+                                                            </span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <button type="button"
+                                                            class="open-attributeQuantity btn btn-primary float-right"
+                                                            data-toggle="modal" data-target="#attributeQuantity">
+                                                        Choose
+                                                    </button>
+                                                    <div class="modal fade" id="attributeQuantity" tabindex="-1"
+                                                         role="dialog"
+                                                         aria-labelledby="attributeQuantity"
+                                                         aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="attributeQuantity">
+                                                                        Choose Quantity</h5>
+                                                                    <button type="button" class="close"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    {% for item in pa_list %}
+                                                                        {% if item.product.name == product.name %}
+                                                                            <form>
+                                                                                <div class="form-group row">
+                                                                                    <label for="ProdQuantity"
+                                                                                           class="col-sm-6 col-form-label">{{ item.attribute.name }}</label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <input type="number"
+                                                                                               class="form-control"
+                                                                                               id="ProdQuantity"
+                                                                                               placeholder="Quantity">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </form>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-primary">
+                                                                        Add to Cart
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <h4>Cart</h4>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                        <table class="table table-borderless table-striped">
+                            <th>Product</th>
+                            <th></th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th></th>
+                            {% for product in pa_list %}
+                                <tr>
+                                    <td>{{ product.product.name }}</td>
+                                    <td></td>
+                                    <td>{{ product.attribute.name }}</td>
+                                    <td>&#x20B9; 10</td>
+                                    <td><span class="glyphicon glyphicon-trash"></span></td>
+                                </tr>
+                            {% endfor %}
+                            <td></td>
+                            <td></td>
+                            <td><strong>Total</strong></td>
+                            <td><strong>&#x20B9; 50</strong></td>
+                            <td></td>
+                        </table>
+                        <a href="#" class="btn btn-primary btn-block">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>No categories are available.</p>
+    {% endif %}
+{% endblock %}
