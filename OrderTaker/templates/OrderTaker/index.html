@@ -38,10 +38,12 @@
                                                     {% endfor %}
                                                     <button type="button"
                                                             class="open-attributeQuantity btn btn-primary float-right"
-                                                            data-toggle="modal" data-target="#attributeQuantity">
+                                                            data-toggle="modal" data-target="#attributeQuantity{{ forloop.counter }}">
                                                         Choose
                                                     </button>
-                                                    <div class="modal fade" id="attributeQuantity" tabindex="-1"
+                                                {% endif %}
+                                            </li>
+                                            <div class="modal fade" id="attributeQuantity{{ forloop.counter }}" tabindex="-1"
                                                          role="dialog"
                                                          aria-labelledby="attributeQuantity"
                                                          aria-hidden="true">
@@ -81,8 +83,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                {% endif %}
-                                            </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
