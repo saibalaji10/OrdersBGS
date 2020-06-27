@@ -27,12 +27,9 @@
                                 <div class="card-body">
                                     <ul class="list-group">
                                         {% for product in category.products.all %}
-                                            {% if product.product_attribute.all %}
-                                            <li class="list-group-item">
-                                                    {{ product.name }}
-                                                     <!--This one bro -->
+                                                <li class="list-group-item">{{ product.name }}
                                                     {% for attributes in product.product_attribute.all %}
-                                                        <span class="badge badge-info">
+                                                            <span class="badge badge-info">
                                                                 {{ attributes.name }}
                                                             </span>
                                                     {% endfor %}
@@ -81,8 +78,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                {% endif %}
-                                            </li>
+                                                </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
@@ -125,4 +121,5 @@
     {% else %}
         <p>No categories are available.</p>
     {% endif %}
+
 {% endblock %}
