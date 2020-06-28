@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute
 
 
@@ -25,26 +26,52 @@ def index(request):
 
 
 def addtocart(request):
-    # if request.session.get('first_time',True):
-    cust = Customer(
-        name="user"
-    )
-    # if request.session.get('customer_id', cust.id):
-    cust.save()
-    cust_order = Order(
-        customer=cust
-    )
-    # if request.session.get('order_id', cust_order.id):
-    cust_order.save()
+    try:
+        # Get Customer object for given session
+        cust = Customer.objects.get(
+            pk=request.session['customer_id']
+        )
+        # Get Order object for given session
+        cust_order = Order.objects.get(
+            pk=request.session['order_id'],
+            customer=cust
+        )
+        print('Next time')
+    except (ObjectDoesNotExist, KeyError) as e:
+        # create customer object
+        print('First Time')
+        cust = Customer(
+            name="user1"
+        )
+        # create order object
+        cust_order = Order(
+            customer=cust
+        )
+        cust.save()
+        cust_order.save()
+
+    print("CustomerID:", cust.id)
+    print("OrderID", cust_order.id)
+
+    # If adding to cart for the first time
+
     for key, value in request.POST.items():
-        if key[:12] == "ProdQuantity":
+        print("Key:", key)
+        print("Value:", value)
+
+    # print('order_id:', request.session['order_id'])
+    # print('customer_id', request.session['customer_id'])
+
+    for key, value in request.POST.items():
+        if key[:12] == "ProdQuantity" and int(value) > 0:
             pa_id = key[12:]
-            OrderDetails.objects.create(
+            od = OrderDetails.objects.get_or_create(
                 product_attribute=ProductAttribute.objects.get(pk=pa_id),
                 quantity=value,
                 order=cust_order
             )
-        # request.session['order_id'] = cust_order.id
-    # request.session['customer_id'] = cust.id
+
+    request.session['customer_id'] = cust.id
+    request.session['order_id'] = cust_order.id
 
     return HttpResponse("Added!")
