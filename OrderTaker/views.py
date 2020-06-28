@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute
+from django.urls import reverse
 
 
 # Create your views here.
@@ -20,7 +21,8 @@ def index(request):
         'category_list': category_list,
         'product_list': product_list,
         'attribute_list': attribute_list,
-        'pa_list': pa_list
+        'pa_list': pa_list,
+        'message': request.session['message'] if 'message' in request.session else None
     }
     return render(request, 'OrderTaker/index.html', context)
 
@@ -62,16 +64,21 @@ def addtocart(request):
     # print('order_id:', request.session['order_id'])
     # print('customer_id', request.session['customer_id'])
 
+    message = 'Added to Cart!'
     for key, value in request.POST.items():
         if key[:12] == "ProdQuantity" and int(value) > 0:
             pa_id = key[12:]
-            od = OrderDetails.objects.get_or_create(
-                product_attribute=ProductAttribute.objects.get(pk=pa_id),
-                quantity=value,
-                order=cust_order
-            )
+            try:
+                od = OrderDetails.objects.get_or_create(
+                    product_attribute=ProductAttribute.objects.get(pk=pa_id),
+                    quantity=value,
+                    order=cust_order
+                )
+            except:
+                message = 'Error!'
 
+    request.session['message'] = message
     request.session['customer_id'] = cust.id
     request.session['order_id'] = cust_order.id
 
-    return HttpResponse("Added!")
+    return HttpResponseRedirect(reverse('index'))
