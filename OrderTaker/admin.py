@@ -4,6 +4,9 @@ from django.contrib import admin
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute
+from import_export import resources, fields
+from import_export.admin import ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget
 
 
 class ProductInline(admin.TabularInline):
@@ -11,22 +14,54 @@ class ProductInline(admin.TabularInline):
     extra = 1
 
 
+class ProductResources(resources.ModelResource):
+
+    def before_import_row(self, row, **kwargs):
+        categoryobject, created = Category.objects.get_or_create(
+            name=row.get('category'))
+
+        Product.objects.get_or_create(
+            name=row.get('product'),
+            category=categoryobject
+        )
+
+        Attribute.objects.get_or_create(
+            name=row.get('attribute')
+        )
+
+    product = fields.Field(column_name='product', attribute='product',
+                           widget=ForeignKeyWidget(Product, 'name'))
+
+    attribute = fields.Field(column_name='attribute', attribute='attribute',
+                             widget=ForeignKeyWidget(Attribute, field='name'));
+
+    class Meta:
+        model = ProductAttribute
+        skip_unchanged = True
+        report_skipped = True
+        exclude = ('id', 'category')
+        import_id_fields = ('product', 'attribute')
+
+
 class ProductAdmin(admin.ModelAdmin):
     # ...
     # inlines = [ProductInline, ]
     list_display = ('name', 'category',)
     filter_horizontal = ('product_attribute',)
+    search_fields = ['name', 'category__name']
 
 
 class OrderAdmin(admin.ModelAdmin):
     # ...
     list_display = ('date', 'customer', 'id')
+    search_fields = ['customer__name', 'id']
 
 
 class CategoryAdmin(admin.ModelAdmin):
     # ...
     list_display = ('name',)
     inlines = [ProductInline, ]
+    search_fields = ['name']
 
 
 class AttributeAdmin(admin.ModelAdmin):
@@ -54,10 +89,11 @@ class CategoryFilter(SimpleListFilter):
             return queryset.filter(product__category__name=self.value())
 
 
-class ProductAttributeAdmin(admin.ModelAdmin):
+class ProductAttributeAdmin(ImportExportModelAdmin):
     list_display = ('id', 'categories', 'product', 'attribute',)
-
     list_filter = ('product', 'attribute',)
+    search_fields = ['product__name', 'product__category__name']
+    resource_class = ProductResources
 
     def categories(self, obj):
         return obj.product.category.name

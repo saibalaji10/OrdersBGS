@@ -1,14 +1,21 @@
 from django.db import models
 from django.utils import timezone
 
+
 class Customer(models.Model):
     name = models.CharField('Customer Name', max_length=100)
     number = models.CharField('Contact Phone', max_length=20)
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
     date = models.DateTimeField('Order Date', default=timezone.now)
     customer = models.ForeignKey(Customer, related_name='customers', on_delete=models.CASCADE)
+
+    def __int__(self):
+        return self.id
 
 
 class Category(models.Model):
@@ -49,3 +56,6 @@ class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
     quantity = models.IntegerField('Item Quantity')
+
+    def __int__(self):
+        return self.order.id

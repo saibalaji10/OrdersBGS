@@ -19,7 +19,6 @@ from OrderTaker import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('add/', views.addtocart, name='add'),
     path('OrderTaker/', include('OrderTaker.urls')),
     path('admin/', admin.site.urls),
 ]
