@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class Customer(models.Model):
     name = models.CharField('Customer Name', max_length=100)
@@ -7,12 +7,12 @@ class Customer(models.Model):
 
 
 class Order(models.Model):
-    date = models.DateTimeField('Order Date')
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    date = models.DateTimeField('Order Date', default=timezone.now)
+    customer = models.ForeignKey(Customer, related_name='customers', on_delete=models.CASCADE)
 
 
 class Category(models.Model):
-    name = models.CharField('Product Category', max_length=150, default='x')
+    name = models.CharField('Product Category', max_length=150)
 
     def __str__(self):
         return self.name
@@ -27,7 +27,7 @@ class Attribute(models.Model):
 
 class Product(models.Model):
     name = models.CharField('Product Name', max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     product_attribute = models.ManyToManyField(Attribute, through='ProductAttribute')
 
     def __str__(self):
@@ -41,8 +41,11 @@ class ProductAttribute(models.Model):
     def __str__(self):
         return str(self.product.name + '-' + self.attribute.name)
 
+    class Meta:
+        unique_together = ('product', 'attribute',)
+
 
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE, default='xy')
+    product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
     quantity = models.IntegerField('Item Quantity')

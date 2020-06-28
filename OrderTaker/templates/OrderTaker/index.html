@@ -26,23 +26,22 @@
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
-                                        {% for product in product_list %}
-                                            {% if product.category.name == category.name %}
-                                                <li class="list-group-item">{{ product.name }}
-                                                    {% for prod in pa_list %}
-                                                        {% if prod.product.name == product.name %}
-                                                            <span class="badge badge-info">
-                                                                {{ prod.attribute.name }}
+                                        {% for product in category.products.all %}
+                                            {% if product.product_attribute.all %}
+                                                <li class="list-group-item">
+                                                    {{ product.name }}
+                                                    {% for attributes in product.product_attribute.all %}
+                                                        <span class="badge badge-info">
+                                                                {{ attributes.name }}
                                                             </span>
-                                                        {% endif %}
                                                     {% endfor %}
                                                     <button type="button"
                                                             class="open-attributeQuantity btn btn-primary btn-sm float-right"
                                                             data-toggle="modal"
-                                                            data-target="#attributeQuantity{{ forloop.counter }}">
+                                                            data-target="#attributeQuantity{{ product.id }}">
                                                         Choose
                                                     </button>
-                                                    <div class="modal fade" id="attributeQuantity{{ forloop.counter }}"
+                                                    <div class="modal fade" id="attributeQuantity{{ product.id }}"
                                                          tabindex="-1"
                                                          role="dialog"
                                                          aria-labelledby="attributeQuantity"
@@ -57,29 +56,33 @@
                                                                         <span aria-hidden="true">&times;</span>
                                                                     </button>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    {% for item in pa_list %}
-                                                                        {% if item.product.name == product.name %}
-                                                                            <form>
+                                                                <form action="{% url 'add' %} " method="post">
+                                                                    {% csrf_token %}
+                                                                    <div class="modal-body">
+                                                                        {% for item in pa_list %}
+                                                                            {% if item.product.name == product.name %}
                                                                                 <div class="form-group row">
-                                                                                    <label for="ProdQuantity"
-                                                                                           class="col-sm-6 col-form-label">{{ item.attribute.name }}</label>
+                                                                                    <label for="ProdQuantity{{ item.id }}"
+                                                                                           class="col-sm-6 col-form-label">
+                                                                                        {{ item.attribute.name }}
+                                                                                    </label>
                                                                                     <div class="col-sm-6">
                                                                                         <input type="number"
                                                                                                class="form-control"
-                                                                                               id="ProdQuantity"
+                                                                                               name="ProdQuantity{{ item.id }}"
+                                                                                               id="ProdQuantity{{ item.id }}"
                                                                                                placeholder="Quantity">
                                                                                     </div>
                                                                                 </div>
-                                                                            </form>
-                                                                        {% endif %}
-                                                                    {% endfor %}
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-primary">
-                                                                        Add to Cart
-                                                                    </button>
-                                                                </div>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="submit" class="btn btn-primary">
+                                                                            Add to Cart
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
                                                             </div>
                                                         </div>
                                                     </div>

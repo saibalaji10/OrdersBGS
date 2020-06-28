@@ -15,10 +15,6 @@ def index(request):
 
     attribute_list = Attribute.objects.order_by('name')
 
-    print(product_list)
-    print(category_list)
-    print(attribute_list)
-    print(pa_list)
     context = {
         'category_list': category_list,
         'product_list': product_list,
@@ -26,3 +22,29 @@ def index(request):
         'pa_list': pa_list
     }
     return render(request, 'OrderTaker/index.html', context)
+
+
+def addtocart(request):
+    # if request.session.get('first_time',True):
+    cust = Customer(
+        name="user"
+    )
+    # if request.session.get('customer_id', cust.id):
+    cust.save()
+    cust_order = Order(
+        customer=cust
+    )
+    # if request.session.get('order_id', cust_order.id):
+    cust_order.save()
+    for key, value in request.POST.items():
+        if key[:12] == "ProdQuantity":
+            pa_id = key[12:]
+            OrderDetails.objects.create(
+                product_attribute=ProductAttribute.objects.get(pk=pa_id),
+                quantity=value,
+                order=cust_order
+            )
+        # request.session['order_id'] = cust_order.id
+    # request.session['customer_id'] = cust.id
+
+    return HttpResponse("Added!")
