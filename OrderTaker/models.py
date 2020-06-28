@@ -17,6 +17,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "Categories"
+
 
 class Attribute(models.Model):
     name = models.CharField('Product Attribute', max_length=150)
@@ -49,3 +52,6 @@ class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
     quantity = models.IntegerField('Item Quantity')
+
+    class Meta:
+        verbose_name_plural = "Order Details"
