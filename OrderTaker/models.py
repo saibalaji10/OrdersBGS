@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.forms import ModelForm
+from django import forms
+
 
 class Customer(models.Model):
     name = models.CharField('Customer Name', max_length=100)
@@ -38,8 +41,8 @@ class Product(models.Model):
 
 
 class ProductAttribute(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='products', on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, related_name='attributes', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.product.name + '-' + self.attribute.name)
@@ -50,7 +53,7 @@ class ProductAttribute(models.Model):
 
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
+    product_attribute = models.ForeignKey(ProductAttribute, related_name='productattributes', on_delete=models.CASCADE)
     quantity = models.IntegerField('Item Quantity')
 
     class Meta:

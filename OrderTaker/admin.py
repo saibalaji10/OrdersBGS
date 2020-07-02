@@ -90,7 +90,7 @@ class CategoryFilter(SimpleListFilter):
 class ProductAttributeAdmin(ImportExportModelAdmin):
     list_display = ('id', 'categories', 'product', 'attribute',)
 
-    list_filter = ('product', 'attribute',)
+    list_filter = ('product__category__name', 'attribute', 'product',)
 
     resource_class = ProductResources
 
