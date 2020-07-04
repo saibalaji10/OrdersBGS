@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'omwqyn3ywq2ihf-$2y1=v!#q4e@gc83!ilhf(%904eem-t*y%b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.0.100,','127.0.0.1','192.168.1.8','0.0.0.0']
 
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'OrderTaker',
+    'django.conf',
     'import_export',
-
 ]
 
 MIDDLEWARE = [
@@ -89,8 +89,8 @@ DATABASES = {
     }
 }
 
-
-
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -117,12 +117,23 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
-
-USE_L10N = True
-
 USE_TZ = True
 
+#For email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST = 'smtp.zoho.com'
+
+EMAIL_HOST_USER = 'mynameisbaju@zoho.com'
+
+EMAIL_HOST_PASSWORD = 'baju10ba'
+
+EMAIL_PORT = 587
+
+#This did the trick
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

@@ -19,6 +19,12 @@ from OrderTaker import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('add/', views.addtocart, name='add'),
+    path('cart/', views.cart, name='cart'),
+    path('user/', views.userdetails, name='userdetails'),
+    path('placeorder/', views.placeorder, name='placeorder'),
+    path('downloadpdf/', views.downloadpdf, name='downloadpdf'),
+    path('completeorder/', views.completeorder, name='completeorder'),
     path('OrderTaker/', include('OrderTaker.urls')),
     path('admin/', admin.site.urls),
 ]

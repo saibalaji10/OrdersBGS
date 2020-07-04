@@ -20,9 +20,13 @@ class Order(models.Model):
 
 class Category(models.Model):
     name = models.CharField('Product Category', max_length=150)
+    isVisible = models.CharField(max_length=256, choices=[('show', 'show'), ('hide', 'hide')], default='show')
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Categories"
 
 
 class Attribute(models.Model):
@@ -42,8 +46,9 @@ class Product(models.Model):
 
 
 class ProductAttribute(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='products', on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, related_name='attributes', on_delete=models.CASCADE)
+    isVisible = models.CharField(max_length=256, choices=[('show', 'show'), ('hide', 'hide')], default='show')
 
     def __str__(self):
         return str(self.product.name + '-' + self.attribute.name)
@@ -54,8 +59,8 @@ class ProductAttribute(models.Model):
 
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
+    product_attribute = models.ForeignKey(ProductAttribute, related_name='productattributes', on_delete=models.CASCADE)
     quantity = models.IntegerField('Item Quantity')
 
-    def __int__(self):
-        return self.order.id
+    class Meta:
+        verbose_name_plural = "Order Details"
