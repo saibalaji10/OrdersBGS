@@ -7,18 +7,22 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.core import serializers
 from django.db.models import Sum
+from .Utilities.orderprinter import OrderPrinter
+from django.conf import settings
+from django.http import HttpResponse, Http404
+import os
 
 
 # Create your views here.
 def index(request):
     context = {}
-    pa_list = ProductAttribute.objects.all()
+    pa_list = ProductAttribute.objects.filter(isVisible__exact='show')
 
     distinct_prod_list = pa_list.values_list('product').distinct()
     product_list = Product.objects.filter(id__in=distinct_prod_list).order_by('name')
 
     distinct_category_list = Product.objects.filter(id__in=distinct_prod_list).values_list('category').distinct()
-    category_list = Category.objects.filter(id__in=distinct_category_list).order_by('name')
+    category_list = Category.objects.filter(id__in=distinct_category_list, isVisible__exact='show').order_by('name')
 
     attribute_list = Attribute.objects.order_by('name')
 
@@ -34,7 +38,7 @@ def index(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(category_list, 5)
+    paginator = Paginator(category_list, 10)
 
     try:
         categories = paginator.page(page)
@@ -111,17 +115,15 @@ def addtocart(request):
 
 
 def cart(request):
-    order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
-    print(order_items)
-    context = {
-        'order_items': order_items,
-    }
+    context = {}
+    if 'order_id' in request.session:
+        order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
+        context['order_items'] = order_items
     return render(request, 'OrderTaker/cart.html', context)
 
 
 def userdetails(request):
     context = {}
-
     for key, value in request.POST.items():
         print("Key:", key)
         print("Value:", value)
@@ -142,6 +144,7 @@ def userdetails(request):
 
 
 def placeorder(request):
+    context = {}
     for key, value in request.POST.items():
         print("Key:", key)
         print("Value:", value)
@@ -149,10 +152,34 @@ def placeorder(request):
     if request.method == 'POST':
         username = request.POST.get('username', 'user')
         number = request.POST.get('phonenumber', '9876543210')
-        user = Customer.objects.filter(
+        Customer.objects.filter(
             customers__id=request.session["customer_id"]
         ).update(name=username, number=number)
-        messages.success(request, "Order placed successfully!")
 
+        if 'order_id' in request.session:
+            order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
+            order_printer = OrderPrinter(order_items)
+            print('Generating Order pdf')
+            order_printer.execute_action()
+
+        context['customer'] = Customer.objects.filter(customers__id=request.session["customer_id"])
+        return render(request, 'OrderTaker/thankyou.html', context)
+
+    return HttpResponseRedirect(reverse('index'))
+
+
+def downloadpdf(request):
+    order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
+    order_printer = OrderPrinter(order_items)
+    pdf_content = order_printer.download_pdf()
+    file_name = 'Order_'+str(order_items[0].order.id)+'.pdf'
+    print(pdf_content)
+    response = HttpResponse(pdf_content, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename='+file_name
+    request.session.flush()
+    return response
+
+def completeorder(request):
     request.session.flush()
     return HttpResponseRedirect(reverse('index'))
+

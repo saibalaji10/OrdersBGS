@@ -49,17 +49,31 @@ class ProductAdmin(admin.ModelAdmin):
     # inlines = [ProductInline, ]
     list_display = ('name', 'category',)
     filter_horizontal = ('product_attribute',)
+    search_fields = ['name', 'category__name']
 
 
 class OrderAdmin(admin.ModelAdmin):
     # ...
     list_display = ('date', 'customer', 'id')
+    search_fields = ['customer__name', 'id']
 
 
 class CategoryAdmin(admin.ModelAdmin):
     # ...
-    list_display = ('name', 'id')
+    list_display = ('name', 'isVisible', 'id')
     inlines = [ProductInline, ]
+    search_fields = ['name']
+    actions = ['hide_selected_items', 'show_selected_items']
+
+    def hide_selected_items(modeladmin, request, queryset):
+        queryset.update(isVisible='hide')
+
+    hide_selected_items.short_description = "Hide Selected Items"
+
+    def show_selected_items(modeladmin, request, queryset):
+        queryset.update(isVisible='show')
+
+    show_selected_items.short_description = "Show Selected Items"
 
 
 class AttributeAdmin(admin.ModelAdmin):
@@ -88,11 +102,20 @@ class CategoryFilter(SimpleListFilter):
 
 
 class ProductAttributeAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'categories', 'product', 'attribute',)
+    list_display = ('id', 'categories', 'product', 'attribute','isVisible')
 
-    list_filter = ('product__category__name', 'attribute', 'product',)
+    list_filter = ('product__category__name', 'attribute', 'product')
 
     resource_class = ProductResources
+    actions = ['hide_selected_items', 'show_selected_items']
+
+    def hide_selected_items(modeladmin, request, queryset):
+        queryset.update(isVisible='hide')
+
+    hide_selected_items.short_description = "Hide Selected Items"
+
+    def show_selected_items(modeladmin, request, queryset):
+        queryset.update(isVisible='show')
 
     def categories(self, obj):
         return obj.product.category.name
