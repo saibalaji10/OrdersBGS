@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute
+from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute, Config
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
@@ -58,6 +58,15 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ['customer__name', 'id']
 
 
+class ConfigAdmin(admin.ModelAdmin):
+    # ...
+    list_display = ('property', 'value', 'id', 'property_description')
+    search_fields = ['property', 'value', 'property_description']
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 class CategoryAdmin(admin.ModelAdmin):
     # ...
     list_display = ('name', 'isVisible', 'id')
@@ -102,7 +111,7 @@ class CategoryFilter(SimpleListFilter):
 
 
 class ProductAttributeAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'categories', 'product', 'attribute','isVisible')
+    list_display = ('id', 'categories', 'product', 'attribute', 'isVisible')
 
     list_filter = ('product__category__name', 'attribute', 'product')
 
@@ -127,5 +136,5 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(OrderDetails, OrderDetailsAdmin)
 admin.site.register(Customer, CustomerAdmin)
-
+admin.site.register(Config, ConfigAdmin)
 admin.site.register(ProductAttribute, ProductAttributeAdmin)

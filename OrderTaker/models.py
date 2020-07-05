@@ -64,3 +64,11 @@ class OrderDetails(models.Model):
 
     class Meta:
         verbose_name_plural = "Order Details"
+
+
+class Config(models.Model):
+    property = models.CharField('Property', max_length=20, unique=True, null=False)
+    value = models.CharField('Value', max_length=20, null=False)
+    property_description = models.CharField('Property Description', max_length=200, default= '', null=False)
+    class Meta:
+        verbose_name_plural = "Configurations"

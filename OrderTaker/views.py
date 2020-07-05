@@ -1,21 +1,47 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute
+from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute, Config
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.core import serializers
 from django.db.models import Sum
 from .Utilities.orderprinter import OrderPrinter
-from django.conf import settings
 from django.http import HttpResponse, Http404
 import os
+import datetime
 
 
 # Create your views here.
 def index(request):
     context = {}
+    config_list = Config.objects.all()
+    mode = config_list.get(property__iexact='Control').value
+    print(mode)
+    state = config_list.get(property__iexact='State').value
+    print(state)
+
+    if 'manual' == str(mode).lower():
+        if 'off' == str(state).lower():
+            print('Website state is off, not rendering orders page')
+            return render(request, 'OrderTaker/willbeback.html', {mode: 'manual'})
+        else:
+            print('Website state is on, rendering orders page')
+
+    elif 'auto' == str(mode).lower():
+        start = config_list.get(property__iexact='Start').value
+        end = config_list.get(property__iexact='Stop').value
+        start_time_object = datetime.datetime.strptime(start, '%H:%M %p').time()
+        end_time_object = datetime.datetime.strptime(end, '%H:%M %p').time()
+        current_time = datetime.datetime.now().time()
+        if current_time >= start_time_object and current_time <= end_time_object:
+            print('Time check complete, Rendering home page for orders')
+        else:
+            print('Time check complete, Website is not turned on')
+            return render(request, 'OrderTaker/willbeback.html', {'mode': 'auto', 'start': start, 'end': end})
+
+    # In case of rendering orders page, getting data from models
     pa_list = ProductAttribute.objects.filter(isVisible__exact='show')
 
     distinct_prod_list = pa_list.values_list('product').distinct()
@@ -172,14 +198,13 @@ def downloadpdf(request):
     order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
     order_printer = OrderPrinter(order_items)
     pdf_content = order_printer.download_pdf()
-    file_name = 'Order_'+str(order_items[0].order.id)+'.pdf'
-    print(pdf_content)
+    file_name = 'Order_' + str(order_items[0].order.id) + '.pdf'
     response = HttpResponse(pdf_content, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename='+file_name
+    response['Content-Disposition'] = 'attachment; filename=' + file_name
     request.session.flush()
     return response
+
 
 def completeorder(request):
     request.session.flush()
     return HttpResponseRedirect(reverse('index'))
-
