@@ -102,8 +102,7 @@ class CategoryFilter(SimpleListFilter):
 
 
 class ProductAttributeAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'categories', 'product', 'attribute','isVisible')
-
+    list_display = ('id', 'categories', 'product', 'attribute','isVisible', )
     list_filter = ('product__category__name', 'attribute', 'product')
 
     resource_class = ProductResources

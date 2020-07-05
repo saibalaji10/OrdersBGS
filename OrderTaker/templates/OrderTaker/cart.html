@@ -1,17 +1,17 @@
 {% extends 'OrderTaker/base.html' %}
 
 {% block content %}
-    {% if order_items %}
-        <div class="container" style="margin-top:30px">
-            <div class="row">
-                <div class="col-md-8 col-sm-12">
-                    <a href="{% url 'index' %}" class="previous">
-                        <strong>&lsaquo;
-                            Back to Shopping
-                        </strong>
-                    </a>
-                    <br><br>
-                    <h3>Cart</h3>
+    <div class="container" style="margin-top:30px">
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <a href="{% url 'index' %}" class="previous">
+                    <strong>&lsaquo;
+                        Back to Shopping
+                    </strong>
+                </a>
+                <br><br>
+                <h3>Cart</h3>
+                {% if order_items %}
                     <form action="{% url 'userdetails' %}" method="post">
                         {% csrf_token %}
                         <table class="table table-striped">
@@ -20,6 +20,7 @@
                                 <th>Product</th>
                                 <th>Variant</th>
                                 <th>Quantity</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -33,6 +34,11 @@
                                                value="{{ item.quantity }}"
                                                aria-label="{{ item.quantity }}">
                                     </td>
+                                    <td>
+                                        <a href="{% url 'deleteitem' item.id %}" style="color: red">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -41,10 +47,10 @@
                             Place Order
                         </button>
                     </form>
-                </div>
-            </div>
-        </div>
-    {% else %}
-        <p>Order Items not found!</p>
-    {% endif %}
+                    </div>
+                    </div>
+                    </div>
+                {% else %}
+                    <p>Order Items not found!</p>
+                {% endif %}
 {% endblock %}

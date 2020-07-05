@@ -107,7 +107,6 @@ def addtocart(request):
                 messages.error(request, 'Error adding item!', extra_tags='danger')
                 print(e)
 
-    # request.session['message'] = message
     request.session['customer_id'] = cust.id
     request.session['order_id'] = cust_order.id
 
@@ -121,6 +120,9 @@ def cart(request):
         context['order_items'] = order_items
     return render(request, 'OrderTaker/cart.html', context)
 
+def deleteitem(request, order_item_id):
+    OrderDetails.objects.filter(pk=order_item_id).delete()
+    return HttpResponseRedirect(reverse('cart'))
 
 def userdetails(request):
     context = {}
