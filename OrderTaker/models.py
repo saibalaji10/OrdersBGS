@@ -13,6 +13,7 @@ class Customer(models.Model):
 class Order(models.Model):
     date = models.DateTimeField('Order Date', default=timezone.now)
     customer = models.ForeignKey(Customer, related_name='customers', on_delete=models.CASCADE)
+    additional_comments = models.TextField(null=True, blank=True)
 
     def __int__(self):
         return self.id
