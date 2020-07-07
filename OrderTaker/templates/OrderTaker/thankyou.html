@@ -8,19 +8,14 @@
                         <h3> Hello {{ the_customer.name }}</h3>
                         <p>Download the Order Acknowledgement below</p>
                     {% endfor %}
-                    <form action="{% url 'downloadpdf' %} " method="post">
-                        {% csrf_token %}
                         <hr>
-                        <button type="submit" class="btn btn-primary">Download Order PDF</button>
-                    </form>
+                        <p>{{ order_id }}</p>
+                        <a class="btn btn-primary" href="{% url 'downloadpdf' order_id %}">Download Order PDF</a>
                     <br>
                     <br>
                     <h3> Come back anytime</h3>
-                    <form action="{% url 'completeorder' %} " method="post">
-                        {% csrf_token %}
                         <hr>
-                        <button type="submit" class="btn btn-primary">Return to Home</button>
-                    </form>
+                        <a class="btn btn-primary" href="{% url 'index' %}" >Return to Home</a>
                 </div>
             </div>
         </div>

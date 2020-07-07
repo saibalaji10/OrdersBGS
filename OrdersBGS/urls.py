@@ -23,8 +23,7 @@ urlpatterns = [
     path('cart/', views.cart, name='cart'),
     path('user/', views.userdetails, name='userdetails'),
     path('placeorder/', views.placeorder, name='placeorder'),
-    path('downloadpdf/', views.downloadpdf, name='downloadpdf'),
-    path('completeorder/', views.completeorder, name='completeorder'),
+    path('<int:order_id>/downloadpdf/',views.downloadpdf, name='downloadpdf'),
     path('OrderTaker/', include('OrderTaker.urls')),
     path('admin/', admin.site.urls),
 ]
