@@ -25,8 +25,7 @@ SECRET_KEY = 'omwqyn3ywq2ihf-$2y1=v!#q4e@gc83!ilhf(%904eem-t*y%b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.100,','127.0.0.1','192.168.1.8','0.0.0.0']
-
+ALLOWED_HOSTS = ['bgsgroceries.com','172.104.182.72','localhost','www.bgsgroceries.com']
 
 
 # Application definition
@@ -134,6 +133,9 @@ EMAIL_PORT = 587
 
 #This did the trick
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

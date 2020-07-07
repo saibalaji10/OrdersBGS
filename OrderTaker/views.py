@@ -11,6 +11,8 @@ from .Utilities.orderprinter import OrderPrinter
 from django.http import HttpResponse, Http404
 import os
 import datetime
+import mimetypes
+
 
 
 # Create your views here.
@@ -32,9 +34,13 @@ def index(request):
     elif 'auto' == str(mode).lower():
         start = config_list.get(property__iexact='Start').value
         end = config_list.get(property__iexact='Stop').value
-        start_time_object = datetime.datetime.strptime(start, '%H:%M %p').time()
-        end_time_object = datetime.datetime.strptime(end, '%H:%M %p').time()
+        start_time_object = datetime.datetime.strptime(start, '%H:%M').time()
+        end_time_object = datetime.datetime.strptime(end, '%H:%M').time()
+
         current_time = datetime.datetime.now().time()
+        print(current_time)
+        print(start_time_object)
+        print(end_time_object)
         if current_time >= start_time_object and current_time <= end_time_object:
             print('Time check complete, Rendering home page for orders')
         else:
@@ -83,6 +89,7 @@ def index(request):
 
 
 def addtocart(request):
+    page = "1"
     try:
         # Get Customer object for given session
         cust = Customer.objects.get(
@@ -117,7 +124,7 @@ def addtocart(request):
 
     # print('order_id:', request.session['order_id'])
     # print('customer_id', request.session['customer_id'])
-    message = 'Added to Cart!'
+    success = False
     for key, value in request.POST.items():
         if key[:12] == "ProdQuantity" and value:
             pa_id = key[12:]
@@ -128,15 +135,20 @@ def addtocart(request):
                         order=cust_order,
                         defaults={'quantity': int(value)},
                     )
-                    messages.success(request, 'Your item added to cart successfully!')
+                    success = True
             except Exception as e:
                 messages.error(request, 'Error adding item!', extra_tags='danger')
                 print(e)
+        if key == "current_page" and value:
+            page = value
+
+    if success:
+        messages.success(request, 'Your item added to cart successfully!')
 
     request.session['customer_id'] = cust.id
     request.session['order_id'] = cust_order.id
 
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('index')+'?page='+str(page))
 
 
 def cart(request):
@@ -190,6 +202,8 @@ def placeorder(request):
             print('Generating Order pdf')
             order_printer.execute_action()
 
+        context['order_message'] = Config.objects.get(property__iexact='Message')
+        context['order_id'] = request.session['order_id']
         context['customer'] = Customer.objects.filter(customers__id=request.session["customer_id"])
         return render(request, 'OrderTaker/thankyou.html', context)
 
