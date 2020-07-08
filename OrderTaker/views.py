@@ -202,22 +202,23 @@ def placeorder(request):
             print('Generating Order pdf')
             order_printer.execute_action()
 
-        context['order_message'] = Config.objects.get(property__iexact='Message')
+        # context['order_message'] = Config.objects.get(property__iexact='Message')
         context['order_id'] = request.session['order_id']
         context['customer'] = Customer.objects.filter(customers__id=request.session["customer_id"])
+        request.session.flush()
         return render(request, 'OrderTaker/thankyou.html', context)
 
+    request.session.flush()
     return HttpResponseRedirect(reverse('index'))
 
 
-def downloadpdf(request):
-    order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
+def downloadpdf(request, order_id):
+    order_items = OrderDetails.objects.filter(order_id=order_id)
     order_printer = OrderPrinter(order_items)
     pdf_content = order_printer.download_pdf()
     file_name = 'Order_' + str(order_items[0].order.id) + '.pdf'
     response = HttpResponse(pdf_content, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=' + file_name
-    request.session.flush()
     return response
 
 
