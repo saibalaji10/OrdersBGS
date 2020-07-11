@@ -129,7 +129,7 @@ class ProductAttributeAdmin(ImportExportModelAdmin):
     def categories(self, obj):
         return obj.product.category.name
 
-
+admin.site.site_header = 'Bombay General Stores Admin'
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Category, CategoryAdmin)
