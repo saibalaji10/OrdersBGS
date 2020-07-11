@@ -18,10 +18,12 @@ from django.urls import include, path
 from OrderTaker import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.home, name='home'),
+    path('enter/', views.enter, name='enter'),
+    path('logout/', views.logout, name='logout'),
+    path('categories/', views.categories, name='categories'),
     path('add/', views.addtocart, name='add'),
     path('cart/', views.cart, name='cart'),
-    path('user/', views.userdetails, name='userdetails'),
     path('placeorder/', views.placeorder, name='placeorder'),
     path('<int:order_id>/downloadpdf/',views.downloadpdf, name='downloadpdf'),
     path('OrderTaker/', include('OrderTaker.urls')),

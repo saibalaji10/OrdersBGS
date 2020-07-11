@@ -8,14 +8,22 @@
                         <h3> Hello {{ the_customer.name }}</h3>
                         <p>Thank you for choosing BGS. Your order has been placed successfully.</p>
                         <p><b>ATTENTION: {{ order_message.value }}</b></p>
-                        <p>Token ID: {{ order_id }}</p>
-                        <hr>
+                        <p>Please note down your token ID which is shown below.</p>
+                        <h3><b>Token ID: {{ order_id }}</b></h3>
+
                         <p>Please check the order details in the pdf below. </p>
+
                     {% endfor %}
-                    <form action="{% url 'downloadpdf' order_id%} " method="post">
+                    <form action="{% url 'downloadpdf' order_id %} " method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-warning">Order Details</button>
                     </form>
+                    <hr>
+                    <br>
+                    <p>You will be logged out automatically, Kindly visit us again.. </p>
+                    <footer class="blockquote-footer">
+                        Bombay General Stores
+                    </footer>
                 </div>
             </div>
         </div>

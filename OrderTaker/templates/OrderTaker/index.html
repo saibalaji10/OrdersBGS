@@ -48,7 +48,9 @@
                     <div class="accordion" style="border: none" id="accordion">
                         {% for category in category_list %}
                             <div class="card" style=" border-radius: 0">
-                                <div class="card-header" onmouseover="this.style.background='white';" onmouseout="this.style.background='#f6f6f6';"  id="heading{{ category.id }}" data-toggle="collapse"
+                                <div class="card-header" onmouseover="this.style.background='white';"
+                                     onmouseout="this.style.background='#f6f6f6';" id="heading{{ category.id }}"
+                                     data-toggle="collapse"
                                      data-target="#collapse{{ category.id }}" role="button"
                                      aria-controls="collapse{{ category.id }}">
                                     <h5 class="mb-0">
@@ -72,7 +74,7 @@
                                                     <li class="list-group-item">
                                                     {{ product.name }}
                                                     {% for attributes in product.product_attribute.all %}
-                                                        <span class="badge badge-info">
+                                                        <span class="badge badge-warning">
                                                                 {{ attributes.name }}
                                                             </span>
                                                     {% endfor %}
@@ -99,6 +101,8 @@
                                                             </button>
                                                         </div>
                                                         <form action="{% url 'add' %} " method="post">
+                                                            <input type="hidden" value="{{ category_list.number }}"
+                                                                   name="current_page">
                                                             {% csrf_token %}
                                                             <div style="background-color: #f6f6f6" class="modal-body">
                                                                 {% for item in pa_list %}
@@ -165,8 +169,14 @@
                     <a class="btn btn-warning float-right" href="{% url 'cart' %}">
                         Proceed to Cart
                     </a>
+
+                    <br>
                 </div>
+                <br>
+                <br>
             </div>
+            <br>
+            <br>
         </div>
     {% else %}
         <p>No categories are available.</p>
