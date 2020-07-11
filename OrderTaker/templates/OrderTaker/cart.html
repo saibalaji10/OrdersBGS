@@ -34,9 +34,11 @@
                                     <td>{{ item.product_attribute.product.name }}</td>
                                     <td>{{ item.product_attribute.attribute.name }}</td>
                                     <td><input type="number"
+                                               style="width: 100px;"
                                                class="form-control form-control-sm"
                                                name="orderitem{{ item.id }}"
                                                value="{{ item.quantity }}"
+                                               placeholder="Qty."
                                                aria-label="{{ item.quantity }}">
                                     </td>
                                     <td>

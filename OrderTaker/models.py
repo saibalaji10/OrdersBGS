@@ -71,5 +71,6 @@ class Config(models.Model):
     property = models.CharField('Property', max_length=20, unique=True, null=False)
     value = models.CharField('Value', max_length=500, null=False)
     property_description = models.CharField('Property Description', max_length=250, default= '', null=False)
+    format = models.CharField('Value Format', max_length=50, default='', null=False)
     class Meta:
         verbose_name_plural = "Configurations"

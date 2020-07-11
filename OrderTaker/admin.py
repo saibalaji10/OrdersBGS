@@ -60,7 +60,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 class ConfigAdmin(admin.ModelAdmin):
     # ...
-    list_display = ('property', 'value', 'id', 'property_description')
+    list_display = ('property', 'value', 'property_description', 'format')
     search_fields = ['property', 'value', 'property_description']
 
     def has_delete_permission(self, request, obj=None):

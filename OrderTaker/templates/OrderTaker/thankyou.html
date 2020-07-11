@@ -6,11 +6,16 @@
                 <div class="col-md-6 col-sm-12">
                     {% for the_customer in customer %}
                         <h3> Hello {{ the_customer.name }}</h3>
-                        <p>Download the Order Acknowledgement below</p>
-                    {% endfor %}
+                        <p>Thank you for choosing BGS. Your order has been placed successfully.</p>
+                        <p><b>ATTENTION: {{ order_message.value }}</b></p>
+                        <p>Order ID: {{ order_id }}</p>
                         <hr>
-                        <p>{{ order_id }}</p>
-                        <a class="btn btn-primary" href="{% url 'downloadpdf' order_id %}">Download Order PDF</a>
+                        <p>Please check the order details in the pdf below. </p>
+                    {% endfor %}
+                    <form action="{% url 'downloadpdf' order_id%} " method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Order Details</button>
+                    </form>
                     <br>
                     <br>
                     <h3> Come back anytime</h3>
