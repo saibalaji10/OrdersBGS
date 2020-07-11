@@ -11,7 +11,6 @@
             {#const cat_count = JSON.parse(y);#}
             console.log(p);
             for (const key of Object.keys(p)) {
-                $('#heading'.concat(p[key].pk)).css("background-color", "#CCFFCC");
                 $('#headin'.concat(p[key].pk)).css("color", "green")
                 console.log(key + " -> " + p[key].pk);
                 {#console.log(p[key].pk+" --"+y[key].id);#}
@@ -46,11 +45,10 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-                    <div class="accordion" id="accordion">
+                    <div class="accordion" style="border: none" id="accordion">
                         {% for category in category_list %}
-                            <div class="card">
-                                {#                                 {% if category.name in co_list %}style="background-color: green"{% endif %}>#}
-                                <div class="card-header" id="heading{{ category.id }}" data-toggle="collapse"
+                            <div class="card" style=" border-radius: 0">
+                                <div class="card-header" onmouseover="this.style.background='white';" onmouseout="this.style.background='#f6f6f6';"  id="heading{{ category.id }}" data-toggle="collapse"
                                      data-target="#collapse{{ category.id }}" role="button"
                                      aria-controls="collapse{{ category.id }}">
                                     <h5 class="mb-0">
@@ -67,7 +65,7 @@
                                 <div id="collapse{{ category.id }}" class="collapse"
                                      aria-labelledby="heading{{ category.id }}"
                                      data-parent="#accordion">
-                                    <div class="card-body">
+                                    <div>
                                         <ul class="list-group">
                                             {% for product in category.products.all %}
                                                 {% if product.product_attribute.all %}
@@ -79,7 +77,7 @@
                                                             </span>
                                                     {% endfor %}
                                                     <button type="button"
-                                                            class="open-attributeQuantity btn btn-primary btn-sm float-right"
+                                                            class="open-attributeQuantity btn btn-warning btn-sm float-right"
                                                             data-toggle="modal"
                                                             data-target="#attributeQuantity{{ product.id }}">
                                                         +
@@ -92,9 +90,9 @@
                                                  aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
+                                                        <div style="background-color: #f6f6f6" class="modal-header">
                                                             <h5 class="modal-title" id="attributeQuantity">
-                                                                Choose Quantity</h5>
+                                                                Choose Quantity for {{ product.name }}</h5>
                                                             <button type="button" class="close"
                                                                     data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
@@ -102,7 +100,7 @@
                                                         </div>
                                                         <form action="{% url 'add' %} " method="post">
                                                             {% csrf_token %}
-                                                            <div class="modal-body">
+                                                            <div style="background-color: #f6f6f6" class="modal-body">
                                                                 {% for item in pa_list %}
                                                                     {% if item.product.name == product.name %}
                                                                         <div class="form-group row">
@@ -114,6 +112,7 @@
                                                                                 <input type="number"
                                                                                        class="form-control"
                                                                                        style="width: 100px;"
+                                                                                       min="0"
                                                                                        name="ProdQuantity{{ item.id }}"
                                                                                        id="ProdQuantity{{ item.id }}"
                                                                                        placeholder="Qty.">
@@ -122,8 +121,8 @@
                                                                     {% endif %}
                                                                 {% endfor %}
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button type="submit" class="btn btn-primary">
+                                                            <div style="background-color: #f6f6f6" class="modal-footer">
+                                                                <button type="submit" class="btn btn-warning">
                                                                     Add to Cart
                                                                 </button>
                                                             </div>
@@ -163,7 +162,7 @@
                             {% endif %}
                         </ul>
                     {% endif %}
-                    <a class="btn btn-primary float-right" href="{% url 'cart' %}">
+                    <a class="btn btn-warning float-right" href="{% url 'cart' %}">
                         Proceed to Cart
                     </a>
                 </div>

@@ -42,19 +42,9 @@ class ProductResources(resources.ModelResource):
         exclude = ('id', 'category')
         import_id_fields = ('product', 'attribute')
 
-
-class ProductAdmin(admin.ModelAdmin):
-    # ...
-
-    # inlines = [ProductInline, ]
-    list_display = ('name', 'category',)
-    filter_horizontal = ('product_attribute',)
-    search_fields = ['name', 'category__name']
-
-
 class OrderAdmin(admin.ModelAdmin):
     # ...
-    list_display = ('date', 'customer', 'id')
+    list_display = ('id', 'customer', 'date')
     search_fields = ['customer__name', 'id']
 
 
@@ -130,7 +120,6 @@ class ProductAttributeAdmin(ImportExportModelAdmin):
         return obj.product.category.name
 
 admin.site.site_header = 'Bombay General Stores Admin'
-admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Attribute, AttributeAdmin)

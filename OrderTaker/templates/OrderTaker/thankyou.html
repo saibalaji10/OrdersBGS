@@ -8,13 +8,13 @@
                         <h3> Hello {{ the_customer.name }}</h3>
                         <p>Thank you for choosing BGS. Your order has been placed successfully.</p>
                         <p><b>ATTENTION: {{ order_message.value }}</b></p>
-                        <p>Order ID: {{ order_id }}</p>
+                        <p>Token ID: {{ order_id }}</p>
                         <hr>
                         <p>Please check the order details in the pdf below. </p>
                     {% endfor %}
                     <form action="{% url 'downloadpdf' order_id%} " method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Order Details</button>
+                        <button type="submit" class="btn btn-warning">Order Details</button>
                     </form>
                 </div>
             </div>
