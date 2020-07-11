@@ -202,7 +202,7 @@ def placeorder(request):
             print('Generating Order pdf')
             order_printer.execute_action()
 
-        # context['order_message'] = Config.objects.get(property__iexact='Message')
+        context['order_message'] = Config.objects.get(property__iexact='Message')
         context['order_id'] = request.session['order_id']
         context['customer'] = Customer.objects.filter(customers__id=request.session["customer_id"])
         request.session.flush()
