@@ -5,7 +5,6 @@ from .models import Product, Order, Category, Attribute, Customer, OrderDetails,
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
-from django.core import serializers
 from django.db.models import Sum
 from .Utilities.orderprinter import OrderPrinter
 from django.http import HttpResponse, Http404
@@ -187,9 +186,10 @@ def categories(request):
                          filter(products__products__productattributes__order_id=request.session['order_id']).
                          annotate(quantity=Sum('products__products__productattributes__quantity')).
                          values('id', 'name', 'quantity'))
-        context['co_list'] = serializers.serialize("json", co_list)
-        context['cat_count'] = cat_count
 
+        context['co_list'] = co_list
+        context['cat_count'] = cat_count
+        print(cat_count)
     page = request.GET.get('page', 1)
 
     paginator = Paginator(category_list, 10)

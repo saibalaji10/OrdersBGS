@@ -25,7 +25,7 @@ SECRET_KEY = 'omwqyn3ywq2ihf-$2y1=v!#q4e@gc83!ilhf(%904eem-t*y%b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['bgsgroceries.com','172.104.182.72','localhost','www.bgsgroceries.com','127.0.0.1']
+ALLOWED_HOSTS = ['bgsgroceries.com','172.104.182.72','localhost','www.bgsgroceries.com','127.0.0.1', '0.0.0.0', '192.168.1.8']
 
 
 # Application definition
