@@ -24,26 +24,30 @@
 </head>
 <body style="background-color: #f6f6f6">
 <header>
-    <nav class="navbar navbar-expand-sm bg-dark">
+    <nav class="navbar navbar-dark navbar-expand-sm bg-dark">
         <a class="navbar-brand h1" style="color: #FFD700" href="{% url 'home' %}">Bombay General Stores</a>
-        <ul class="nav navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-item nav-link" style="color: #FFD700" href="{% url 'cart' %}">
-                    <strong>
-                        <i class="fa fa-shopping-cart"></i> Cart
-                    </strong>
-                </a>
-            </li>
-            <li class="nav-item">
-                <strong> &nbsp &nbsp</strong>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" style="color: #FFD700" href="{% url 'logout' %}">
-                    <strong>Logout</strong>
-                </a>
-            </li>
-
-        </ul>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-item nav-link" style="color: #fff9d8" href="{% url 'cart' %}">
+                        <strong>
+                            <i class="fa fa-shopping-cart"></i> Cart
+                        </strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-item nav-link" style="color: #fff9d8" href="{% url 'logout' %}">
+                        <strong>
+                            Logout
+                        </strong>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </nav>
 </header>
 <main>
