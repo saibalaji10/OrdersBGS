@@ -18,44 +18,17 @@ class Order(models.Model):
     def __int__(self):
         return self.id
 
-
-class Category(models.Model):
-    name = models.CharField('Product Category', max_length=150)
-    isVisible = models.CharField(max_length=256, choices=[('show', 'show'), ('hide', 'hide')], default='show')
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name_plural = "Categories"
-
-
-class Attribute(models.Model):
-    name = models.CharField('Product Attribute', max_length=150)
-
-    def __str__(self):
-        return self.name
-
-
-class Product(models.Model):
-    name = models.CharField('Product Name', max_length=200)
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
-    product_attribute = models.ManyToManyField(Attribute, through='ProductAttribute')
-
-    def __str__(self):
-        return self.name
-
-
 class ProductAttribute(models.Model):
-    product = models.ForeignKey(Product, related_name='products', on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, related_name='attributes', on_delete=models.CASCADE)
+    category = models.CharField('Category', max_length=150)
+    product = models.CharField('Product', max_length=200)
+    attribute = models.CharField('Attribute', max_length=150)
     isVisible = models.CharField(max_length=256, choices=[('show', 'show'), ('hide', 'hide')], default='show')
 
     def __str__(self):
-        return str(self.product.name + '-' + self.attribute.name)
+        return str(self.product + '-' + self.attribute)
 
     class Meta:
-        unique_together = ('product', 'attribute',)
+        unique_together = ('category', 'product', 'attribute',)
 
 
 class OrderDetails(models.Model):

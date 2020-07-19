@@ -3,37 +3,21 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute, Config
+from .models import Order, Customer, OrderDetails, ProductAttribute, Config
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
 
 
-class ProductInline(admin.TabularInline):
-    model = Product
-    extra = 1
-
-
+#
 class ProductResources(resources.ModelResource):
 
     def before_import_row(self, row, **kwargs):
-        categoryobject, created = Category.objects.get_or_create(
-            name=row.get('category'))
-
-        Product.objects.get_or_create(
-            name=row.get('product'),
-            category=categoryobject
+        ProductAttribute.objects.get_or_create(
+            product=row.get('product'),
+            category=row.get('category'),
+            attribute=row.get('attribute')
         )
-
-        Attribute.objects.get_or_create(
-            name=row.get('attribute')
-        )
-
-    product = fields.Field(column_name='product', attribute='product',
-                           widget=ForeignKeyWidget(Product, 'name'))
-
-    attribute = fields.Field(column_name='attribute', attribute='attribute',
-                             widget=ForeignKeyWidget(Attribute, field='name'));
 
     class Meta:
         model = ProductAttribute
@@ -55,28 +39,6 @@ class ConfigAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-class CategoryAdmin(admin.ModelAdmin):
-    # ...
-    list_display = ('name', 'isVisible', 'id')
-    inlines = [ProductInline, ]
-    search_fields = ['name']
-    actions = ['hide_selected_items', 'show_selected_items']
-
-    def hide_selected_items(modeladmin, request, queryset):
-        queryset.update(isVisible='hide')
-
-    hide_selected_items.short_description = "Hide Selected Items"
-
-    def show_selected_items(modeladmin, request, queryset):
-        queryset.update(isVisible='show')
-
-    show_selected_items.short_description = "Show Selected Items"
-
-
-class AttributeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id')
 
 
 class OrderDetailsAdmin(admin.ModelAdmin):
@@ -101,11 +63,11 @@ class CategoryFilter(SimpleListFilter):
 
 
 class ProductAttributeAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'categories', 'product', 'attribute', 'isVisible')
+    list_display = ('id', 'category', 'product', 'attribute', 'isVisible')
 
-    list_filter = ('product__category__name', 'attribute', 'product')
+    list_filter = ('category', 'attribute', 'product')
 
-    resource_class = ProductResources
+    # resource_class = ProductResources
     actions = ['hide_selected_items', 'show_selected_items']
 
     def hide_selected_items(modeladmin, request, queryset):
@@ -119,10 +81,9 @@ class ProductAttributeAdmin(ImportExportModelAdmin):
     def categories(self, obj):
         return obj.product.category.name
 
+
 admin.site.site_header = 'Bombay General Stores Admin'
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(OrderDetails, OrderDetailsAdmin)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Config, ConfigAdmin)

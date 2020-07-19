@@ -41,7 +41,7 @@
                                 type="button" data-toggle="collapse"
                                 data-target="#collapse{{ category.id }}"
                                 aria-expanded="true" aria-controls="collapse{{ category.id }}">
-                            {{ category.name }}
+                            {{ category.category }}{{ category.id }}
                         </button>
                         <span id="badge{{ category.id }}" class="badge badge-light float-right"
                               style="color: grey">
@@ -61,13 +61,13 @@
                          data-parent="#accordion">
                         <div>
                             <ul class="list-group">
-                                {% for product in category.products.all %}
+                                {% for product in product_list %}
                                     {% if product.product_attribute.all %}
                                         <li class="list-group-item">
-                                        {{ product.name }}
-                                        {% for attributes in product.product_attribute.all %}
+                                        {{ product.product }}
+                                        {% for attributes in pa_list %}
                                             <span class="badge badge-warning">
-                                                                {{ attributes.name }}
+                                                                {{ attribute.attribute }}
                                                             </span>
                                         {% endfor %}
                                         <button type="button"

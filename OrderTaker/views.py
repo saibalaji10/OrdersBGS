@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Product, Order, Category, Attribute, Customer, OrderDetails, ProductAttribute, Config
+from .models import Order, Customer, OrderDetails, ProductAttribute, Config
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
@@ -61,7 +61,6 @@ def addtocart(request):
     request.session['order_id'] = cust_order.id
     return HttpResponseRedirect(reverse('home') + '?page=' + str(page))
 
-
 def cart(request):
     context = {}
     if 'customer_id' in request.session:
@@ -102,7 +101,6 @@ def placeorder(request):
     request.session.flush()
     return HttpResponseRedirect(reverse('home'))
 
-
 def downloadpdf(request, order_id):
     order_items = OrderDetails.objects.filter(order_id=order_id)
     order_printer = OrderPrinter(order_items)
@@ -112,14 +110,12 @@ def downloadpdf(request, order_id):
     response['Content-Disposition'] = 'attachment; filename=' + file_name
     return response
 
-
 def home(request):
     if 'customer_id' in request.session:
         print("Logged in")
         return categories(request)
     print("Log in failed")
     return render(request, 'OrderTaker/userdetails.html', {})
-
 
 def enter(request):
     if request.method == 'POST':
@@ -140,7 +136,6 @@ def enter(request):
         return categories(request)
 
     return home(request)
-
 # Create your views here.
 def categories(request):
     context = {}
@@ -171,21 +166,18 @@ def categories(request):
     # In case of rendering orders page, getting data from models
     pa_list = ProductAttribute.objects.filter(isVisible__exact='show')
 
-    distinct_prod_list = pa_list.values_list('product').distinct()
-    product_list = Product.objects.filter(id__in=distinct_prod_list).order_by('name')
+    product_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('product')
 
-    distinct_category_list = Product.objects.filter(id__in=distinct_prod_list).values_list('category').distinct()
-    category_list = Category.objects.filter(id__in=distinct_category_list, isVisible__exact='show').order_by('name')
+    category_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('category')
 
-    attribute_list = Attribute.objects.order_by('name')
+    attribute_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('attribute')
 
     if 'order_id' in request.session:
-        co_list = Category.objects.filter(
-            products__products__productattributes__order_id=request.session['order_id'])
-        cat_count = list(Category.objects.
-                         filter(products__products__productattributes__order_id=request.session['order_id']).
-                         annotate(quantity=Sum('products__products__productattributes__quantity')).
-                         values('id', 'name', 'quantity'))
+        co_list = ProductAttribute.objects.filter(productattributes__order_id=request.session['order_id'])
+        cat_count = list(ProductAttribute.objects.
+                         filter(productattributes__order_id=request.session['order_id']).
+                         annotate(quantity=Sum('productattributes__quantity')).
+                         values('id', 'category', 'quantity'))
 
         context['co_list'] = co_list
         context['cat_count'] = cat_count
