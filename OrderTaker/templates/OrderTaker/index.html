@@ -41,7 +41,7 @@
                                 type="button" data-toggle="collapse"
                                 data-target="#collapse{{ category.id }}"
                                 aria-expanded="true" aria-controls="collapse{{ category.id }}">
-                            {{ category.category }}{{ category.id }}
+                            {{ category.category }}
                         </button>
                         <span id="badge{{ category.id }}" class="badge badge-light float-right"
                               style="color: grey">
@@ -62,13 +62,15 @@
                         <div>
                             <ul class="list-group">
                                 {% for product in product_list %}
-                                    {% if product.product_attribute.all %}
+                                    {% if product.category == category.category %}
                                         <li class="list-group-item">
                                         {{ product.product }}
-                                        {% for attributes in pa_list %}
+                                        {% for attributes in attribute_list %}
+                                            {% if attributes.attribute == product.attribute %}
                                             <span class="badge badge-warning">
-                                                                {{ attribute.attribute }}
+                                                                {{ attributes.attribute }}
                                                             </span>
+                                            {% endif %}
                                         {% endfor %}
                                         <button type="button"
                                                 class="open-attributeQuantity btn btn-warning btn-sm float-right"
@@ -76,7 +78,7 @@
                                                 data-target="#attributeQuantity{{ product.id }}">
                                             +
                                         </button>
-                                    {% endif %}
+                                        {% endif %}
                                 <div class="modal fade" id="attributeQuantity{{ product.id }}"
                                      tabindex="-1"
                                      role="dialog"
