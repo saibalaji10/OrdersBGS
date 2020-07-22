@@ -48,7 +48,7 @@
 
                                             {% if category in co_list %}
                                                 {% for indiv in cat_count %}
-                                                    {% if category.id == indiv.id %}
+                                                    {% if category.category == indiv.category %}
                                                         {{ indiv.quantity }}
                                                     {% endif %}
                                                 {% endfor %}
@@ -64,71 +64,71 @@
                                 {% for product in product_list %}
                                     {% if product.category == category.category %}
                                         <li class="list-group-item">
-                                        {{ product.product }}
-                                        {% for attributes in attribute_list %}
-                                            {% if attributes.attribute == product.attribute %}
-                                            <span class="badge badge-warning">
+                                            {{ product.product }}
+                                            {% for attributes in pa_list %}
+                                                {% if attributes.product == product.product %}
+                                                    <span class="badge badge-warning">
                                                                 {{ attributes.attribute }}
                                                             </span>
-                                            {% endif %}
-                                        {% endfor %}
-                                        <button type="button"
-                                                class="open-attributeQuantity btn btn-warning btn-sm float-right"
-                                                data-toggle="modal"
-                                                data-target="#attributeQuantity{{ product.id }}">
-                                            +
-                                        </button>
-                                        {% endif %}
-                                <div class="modal fade" id="attributeQuantity{{ product.id }}"
-                                     tabindex="-1"
-                                     role="dialog"
-                                     aria-labelledby="attributeQuantity"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div style="background-color: #f6f6f6" class="modal-header">
-                                                <h5 class="modal-title" id="attributeQuantity">
-                                                    Choose Quantity for {{ product.name }}</h5>
-                                                <button type="button" class="close"
-                                                        data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <form action="{% url 'add' %} " method="post">
-                                                <input type="hidden" value="{{ category_list.number }}"
-                                                       name="current_page">
-                                                {% csrf_token %}
-                                                <div style="background-color: #f6f6f6" class="modal-body">
-                                                    {% for item in pa_list %}
-                                                        {% if item.product.id == product.id %}
-                                                            <div class="form-group row">
-                                                                <label for="ProdQuantity{{ item.id }}"
-                                                                       class="col-sm-6 col-form-label">
-                                                                    {{ item.attribute.name }}
-                                                                </label>
-                                                                <div class="col-sm-6">
-                                                                    <input type="number"
-                                                                           class="form-control"
-                                                                           style="width: 100px;"
-                                                                           min="0"
-                                                                           name="ProdQuantity{{ item.id }}"
-                                                                           id="ProdQuantity{{ item.id }}"
-                                                                           placeholder="Qty.">
-                                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <button type="button"
+                                                    class="open-attributeQuantity btn btn-warning btn-sm float-right"
+                                                    data-toggle="modal"
+                                                    data-target="#attributeQuantity{{ forloop.counter }}">
+                                                +
+                                            </button>
+                                            <div class="modal fade" id="attributeQuantity{{ forloop.counter }}"
+                                                 tabindex="-1"
+                                                 role="dialog"
+                                                 aria-labelledby="attributeQuantity"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div style="background-color: #f6f6f6" class="modal-header">
+                                                            <h5 class="modal-title" id="attributeQuantity">
+                                                                Choose Quantity for {{ product.product }}</h5>
+                                                            <button type="button" class="close"
+                                                                    data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form action="{% url 'add' %} " method="post">
+                                                            <input type="hidden" value="{{ category_list.number }}"
+                                                                   name="current_page">
+                                                            {% csrf_token %}
+                                                            <div style="background-color: #f6f6f6" class="modal-body">
+                                                                {% for item in pa_list %}
+                                                                    {% if item.product == product.product %}
+                                                                        <div class="form-group row">
+                                                                            <label for="ProdQuantity{{ item.id }}"
+                                                                                   class="col-sm-6 col-form-label">
+                                                                                {{ item.attribute }}
+                                                                            </label>
+                                                                            <div class="col-sm-6">
+                                                                                <input type="number"
+                                                                                       class="form-control"
+                                                                                       style="width: 100px;"
+                                                                                       min="0"
+                                                                                       name="ProdQuantity{{ item.id }}"
+                                                                                       id="ProdQuantity{{ item.id }}"
+                                                                                       placeholder="Qty.">
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                {% endfor %}
                                                             </div>
-                                                        {% endif %}
-                                                    {% endfor %}
+                                                            <div style="background-color: #f6f6f6" class="modal-footer">
+                                                                <button type="submit" class="btn btn-warning">
+                                                                    Add to Cart
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
                                                 </div>
-                                                <div style="background-color: #f6f6f6" class="modal-footer">
-                                                    <button type="submit" class="btn btn-warning">
-                                                        Add to Cart
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                </li>
+                                            </div>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
                         </div>

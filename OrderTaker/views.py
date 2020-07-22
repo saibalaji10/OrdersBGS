@@ -176,8 +176,8 @@ def categories(request):
         co_list = ProductAttribute.objects.filter(productattributes__order_id=request.session['order_id'])
         cat_count = list(ProductAttribute.objects.
                          filter(productattributes__order_id=request.session['order_id']).
-                         annotate(quantity=Sum('productattributes__quantity')).
-                         values('id', 'category', 'quantity'))
+                         values('category').
+                         annotate(quantity=Sum('productattributes__quantity')))
 
         context['co_list'] = co_list
         context['cat_count'] = cat_count

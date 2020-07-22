@@ -31,8 +31,8 @@
                             <tbody>
                             {% for item in order_items %}
                                 <tr>
-                                    <td>{{ item.product_attribute.product.name }}</td>
-                                    <td>{{ item.product_attribute.attribute.name }}</td>
+                                    <td>{{ item.product_attribute.product }}</td>
+                                    <td>{{ item.product_attribute.attribute }}</td>
                                     <td><input type="number"
                                                style="width: 100px;"
                                                min="0"
