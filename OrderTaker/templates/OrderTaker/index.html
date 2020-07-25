@@ -37,11 +37,11 @@
                                  aria-controls="collapse{{ category.id }}">
                         {% endif %}
                     <h5 class="mb-0">
-                        <button class="btn btn-link" id="headin{{ category.id }}"
+                        <button class="btn btn-link" id="heading{{ category.id }}"
                                 type="button" data-toggle="collapse"
                                 data-target="#collapse{{ category.id }}"
                                 aria-expanded="true" aria-controls="collapse{{ category.id }}">
-                            {{ category.category }}
+                            {{ category.name }}
                         </button>
                         <span id="badge{{ category.id }}" class="badge badge-light float-right"
                               style="color: grey">
@@ -62,7 +62,7 @@
                         <div>
                             <ul class="list-group">
                                 {% for product in product_list %}
-                                    {% if product.category == category.category %}
+                                    {% if product.category == category.name %}
                                         <li class="list-group-item">
                                             {{ product.product }}
                                             {% for attributes in pa_list %}

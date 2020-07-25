@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Order, Customer, OrderDetails, ProductAttribute, Config
+from .models import Order, Customer, OrderDetails, ProductAttribute, Config, Category, Attribute
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
@@ -174,9 +174,9 @@ def categories(request):
 
     product_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('product')
 
-    category_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('category')
+    category_list = Category.objects.filter(isVisible__exact='show')
 
-    attribute_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('attribute')
+    attribute_list = Attribute.objects.all()
 
     if 'order_id' in request.session:
         co_list = ProductAttribute.objects.filter(productattributes__order_id=request.session['order_id'])

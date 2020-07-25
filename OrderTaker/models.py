@@ -18,14 +18,31 @@ class Order(models.Model):
     def __int__(self):
         return self.id
 
-class ProductAttribute(models.Model):
-    category = models.CharField('Category', max_length=150)
-    product = models.CharField('Product', max_length=200)
-    attribute = models.CharField('Attribute', max_length=150)
+class Category(models.Model):
+    name = models.CharField('Product Category', max_length=150)
     isVisible = models.CharField(max_length=256, choices=[('show', 'show'), ('hide', 'hide')], default='show')
 
     def __str__(self):
-        return str(self.product + '-' + self.attribute)
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
+
+class Attribute(models.Model):
+    name = models.CharField('Product Attribute', max_length=150)
+
+    def __str__(self):
+        return self.name
+
+class ProductAttribute(models.Model):
+    category = models.ForeignKey(Category, related_name='categories', on_delete=models.CASCADE)
+    product = models.CharField('Product', max_length=200)
+    attribute = models.ForeignKey(Attribute, related_name='attributes', on_delete=models.CASCADE)
+    isVisible = models.CharField(max_length=256, choices=[('show', 'show'), ('hide', 'hide')], default='show')
+
+    def __str__(self):
+        return str(self.product + '-' + self.attribute.name)
 
     class Meta:
         unique_together = ('category', 'product', 'attribute',)
@@ -45,5 +62,6 @@ class Config(models.Model):
     value = models.CharField('Value', max_length=500, null=False)
     property_description = models.CharField('Property Description', max_length=250, default= '', null=False)
     format = models.CharField('Value Format', max_length=50, default='', null=False)
+
     class Meta:
         verbose_name_plural = "Configurations"
