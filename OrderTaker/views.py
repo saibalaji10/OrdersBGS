@@ -86,6 +86,12 @@ def placeorder(request):
                 except Exception as e:
                     print(e)
 
+            if key == 'commentsTextArea' and value and 'order_id' in request.session:
+                try:
+                    od = Order.objects.filter(pk=request.session['order_id']).update(additional_comments=value)
+                except Exception as e:
+                    print(e)
+
         if 'order_id' in request.session:
             order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
             order_printer = OrderPrinter(order_items)
@@ -181,7 +187,7 @@ def categories(request):
 
         context['co_list'] = co_list
         context['cat_count'] = cat_count
-        print(cat_count)
+        print(co_list)
     page = request.GET.get('page', 1)
 
     paginator = Paginator(category_list, 10)
