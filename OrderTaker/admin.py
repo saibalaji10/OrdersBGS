@@ -13,11 +13,16 @@ from import_export.widgets import ForeignKeyWidget
 class ProductResources(resources.ModelResource):
 
     def before_import_row(self, row, **kwargs):
-        ProductAttribute.objects.get_or_create(
-            product=row.get('product'),
-            category=row.get('category'),
-            attribute=row.get('attribute')
+        categoryobject, created = Category.objects.get_or_create(
+            name=row.get('category'))
+
+        attributeobject, created = Attribute.objects.get_or_create(
+            name=row.get('attribute')
         )
+    category = fields.Field(column_name='category', attribute='category', widget=ForeignKeyWidget(Category, 'name'))
+    attribute = fields.Field(column_name='attribute', attribute='attribute', widget=ForeignKeyWidget(Attribute, 'name'))
+
+    product = fields.Field(column_name='product', attribute='product',)
 
     class Meta:
         model = ProductAttribute
@@ -75,7 +80,7 @@ class ProductAttributeAdmin(ImportExportModelAdmin):
 
     list_filter = ('category', 'attribute', 'product')
 
-    # resource_class = ProductResources
+    resource_class = ProductResources
     actions = ['hide_selected_items', 'show_selected_items']
 
     def hide_selected_items(modeladmin, request, queryset):
