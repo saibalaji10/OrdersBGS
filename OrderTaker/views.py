@@ -179,11 +179,10 @@ def categories(request):
     attribute_list = Attribute.objects.all()
 
     if 'order_id' in request.session:
-        co_list = ProductAttribute.objects.filter(productattributes__order_id=request.session['order_id'])
-        cat_count = list(ProductAttribute.objects.
-                         filter(productattributes__order_id=request.session['order_id']).
-                         values('category').
-                         annotate(quantity=Sum('productattributes__quantity')))
+        co_list = Category.objects.filter(categories__productattributes__order_id=request.session['order_id'])
+        cat_count = list(Category.objects.filter(categories__productattributes__order_id=request.session['order_id']).
+                         values('id','name').
+                         annotate(quantity=Sum('categories__productattributes__quantity')))
 
         context['co_list'] = co_list
         context['cat_count'] = cat_count

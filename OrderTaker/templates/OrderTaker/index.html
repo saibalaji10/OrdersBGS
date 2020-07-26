@@ -24,7 +24,7 @@
                     {% for category in category_list %}
                         <div class="card" style=" border-radius: 0">
                         {% if category in co_list %}
-                            <div class="card-header" style="color:green;background: #90EE90"
+                            <div class="card-header" style="color:green;background: #90ee90"
                                  id="heading{{ category.id }}"
                                  data-toggle="collapse"
                                  data-target="#collapse{{ category.id }}" role="button"
@@ -48,7 +48,7 @@
 
                                             {% if category in co_list %}
                                                 {% for indiv in cat_count %}
-                                                    {% if category.category == indiv.category %}
+                                                    {% if category.id == indiv.id %}
                                                         {{ indiv.quantity }}
                                                     {% endif %}
                                                 {% endfor %}
@@ -62,10 +62,10 @@
                         <div>
                             <ul class="list-group">
                                 {% for product in product_list %}
-                                    {% if product.category == category.name %}
+                                    {% if product.category.name == category.name %}
                                         <li class="list-group-item">
                                             {{ product.product }}
-                                            {% for attributes in pa_list %}
+                                            {% for attributes in attribute_list %}
                                                 {% if attributes.product == product.product %}
                                                     <span class="badge badge-warning">
                                                                 {{ attributes.attribute }}
