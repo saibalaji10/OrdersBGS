@@ -3,139 +3,23 @@
 {% block content %}
     {% if category_list %}
         <div class="container" style="margin-top:30px">
-        <h3>Order online!</h3>
-        <p>
-            No more queues. Select your needs from the list and take it way in a flash. </p>
-        <br>
-        <div class="row">
-            <div class="col-md-8 col-sm-12">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}  alert-dismissible fade show"
-                             role="alert">
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                <div class="accordion" style="border: none" id="accordion">
-                    {% for category in category_list %}
-                        <div class="card" style=" border-radius: 0">
-                        {% if category in co_list %}
-                            <div class="card-header" style="color:green;background: #90ee90"
-                                 id="heading{{ category.id }}"
-                                 data-toggle="collapse"
-                                 data-target="#collapse{{ category.id }}" role="button"
-                                 aria-controls="collapse{{ category.id }}">
-                        {% else %}
-                            <div class="card-header" onmouseover="this.style.background='white';"
-                                 onmouseout="this.style.background='#f6f6f6';" id="heading{{ category.id }}"
-                                 data-toggle="collapse"
-                                 data-target="#collapse{{ category.id }}" role="button"
-                                 aria-controls="collapse{{ category.id }}">
-                        {% endif %}
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" id="heading{{ category.id }}"
-                                type="button" data-toggle="collapse"
-                                data-target="#collapse{{ category.id }}"
-                                aria-expanded="true" aria-controls="collapse{{ category.id }}">
-                            {{ category.name }}
-                        </button>
-                        <span id="badge{{ category.id }}" class="badge badge-light float-right"
-                              style="color: grey">
-
-                                            {% if category in co_list %}
-                                                {% for indiv in cat_count %}
-                                                    {% if category.id == indiv.id %}
-                                                        {{ indiv.quantity }}
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% endif %}
-                                        </span>
-                    </h5>
-                    </div>
-                    <div id="collapse{{ category.id }}" class="collapse"
-                         aria-labelledby="heading{{ category.id }}"
-                         data-parent="#accordion">
-                        <div>
-                            <ul class="list-group">
-                                {% for product in product_list %}
-                                    {% if product.category.name == category.name %}
-                                        <li class="list-group-item">
-                                            {{ product.product }}
-                                            {% for attributes in attribute_list %}
-                                                {% if attributes.product == product.product %}
-                                                    <span class="badge badge-warning">
-                                                                {{ attributes.attribute }}
-                                                            </span>
-                                                {% endif %}
-                                            {% endfor %}
-                                            <button type="button"
-                                                    class="open-attributeQuantity btn btn-warning btn-sm float-right"
-                                                    data-toggle="modal"
-                                                    data-target="#attributeQuantity{{ forloop.counter }}">
-                                                +
-                                            </button>
-                                            <div class="modal fade" id="attributeQuantity{{ forloop.counter }}"
-                                                 tabindex="-1"
-                                                 role="dialog"
-                                                 aria-labelledby="attributeQuantity"
-                                                 aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div style="background-color: #f6f6f6" class="modal-header">
-                                                            <h5 class="modal-title" id="attributeQuantity">
-                                                                Choose Quantity for {{ product.product }}</h5>
-                                                            <button type="button" class="close"
-                                                                    data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <form action="{% url 'add' %} " method="post">
-                                                            <input type="hidden" value="{{ category_list.number }}"
-                                                                   name="current_page">
-                                                            {% csrf_token %}
-                                                            <div style="background-color: #f6f6f6" class="modal-body">
-                                                                {% for item in pa_list %}
-                                                                    {% if item.product == product.product %}
-                                                                        <div class="form-group row">
-                                                                            <label for="ProdQuantity{{ item.id }}"
-                                                                                   class="col-sm-6 col-form-label">
-                                                                                {{ item.attribute }}
-                                                                            </label>
-                                                                            <div class="col-sm-6">
-                                                                                <input type="number"
-                                                                                       class="form-control"
-                                                                                       style="width: 100px;"
-                                                                                       min="0"
-                                                                                       name="ProdQuantity{{ item.id }}"
-                                                                                       id="ProdQuantity{{ item.id }}"
-                                                                                       placeholder="Qty.">
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            </div>
-                                                            <div style="background-color: #f6f6f6" class="modal-footer">
-                                                                <button type="submit" class="btn btn-warning">
-                                                                    Add to Cart
-                                                                </button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    </div>
-                    {% endfor %}
-                    </div>
+            <h3>Order online!</h3>
+            <p>
+                No more queues. Select your needs from the list and take it way in a flash. </p>
+            <br>
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}  alert-dismissible fade show"
+                                 role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     {% if category_list.has_other_pages %}
                         <ul class="pagination">
                             {% if category_list.has_previous %}
@@ -153,13 +37,151 @@
                                 {% endif %}
                             {% endfor %}
                             {% if category_list.has_next %}
-                                <li><a class="page-link" href="?page={{ category_list.next_page_number }}">&raquo;</a>
+                                <li><a class="page-link"
+                                       href="?page={{ category_list.next_page_number }}">&raquo;</a>
                                 </li>
                             {% else %}
                                 <li class="disabled"><span class="page-link">&raquo;</span></li>
                             {% endif %}
                         </ul>
                     {% endif %}
+                    <div class="accordion" style="border: none" id="accordion">
+
+                        {% for product_category, products_list in category_list %}
+                            {% with forloop.counter as outer_counter %}
+                                <div class="card" style=" border-radius: 0">
+
+                                    <div class="card-header" onmouseover="this.style.background='white';"
+                                         onmouseout="this.style.background='#f6f6f6';" id="heading{{ outer_counter }}"
+                                         data-toggle="collapse"
+                                         data-target="#collapse{{ outer_counter }}" role="button"
+                                         aria-controls="collapse{{ outer_counter }}">
+                                        <h5 class="mb-0">
+                                            <button style="font-size:medium"
+                                                    class="btn btn-link" id="button{{ outer_counter }}"
+                                                    type="button" data-toggle="collapse"
+                                                    data-target="#collapse{{ outer_counter }}"
+                                                    aria-expanded="true" aria-controls="collapse{{ outer_counter }}">
+                                                {{ product_category }}
+                                            </button>
+
+                                        </h5>
+                                    </div>
+                                    <div id="collapse{{ outer_counter }}" class="collapse"
+                                         aria-labelledby="heading{{ outer_counter }}"
+                                         data-parent="#accordion">
+                                        <div>
+                                            <ul class="list-group">
+                                                {% for item in products_list %}
+                                                    {% with forloop.counter as inner_counter %}
+                                                        <li class="list-group-item" data-toggle="modal"
+                                                            style="font-size: small;font-weight: bold"
+                                                            data-target="#attributeQuantity{{ item.product_ids.0 }}"
+                                                            role="button">
+                                                            {{ item.product }}
+                                                            {% for attribute in item.attributes %}
+                                                                <span class="badge badge-warning">
+                                                                        {{ attribute }}
+                                                                     </span>
+                                                            {% endfor %}
+                                                            <button type="button"
+                                                                    class="open-attributeQuantity btn btn-warning btn-sm float-right"
+                                                                    data-toggle="modal"
+                                                                    data-target="#attributeQuantity{{ item.product_ids.0 }}">
+                                                                +
+                                                            </button>
+                                                            <div class="modal fade"
+                                                                 id="attributeQuantity{{ item.product_ids.0 }}"
+                                                                 tabindex="-1"
+                                                                 role="dialog"
+                                                                 aria-labelledby="attributeQuantity"
+                                                                 aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered"
+                                                                     role="document">
+                                                                    <div class="modal-content">
+                                                                        <div style="background-color: #f6f6f6"
+                                                                             class="modal-header">
+                                                                            <h5 class="modal-title"
+                                                                                id="attributeQuantity">
+                                                                                Choose Quantity
+                                                                                for {{ product.name }}</h5>
+                                                                            <button type="button" class="close"
+                                                                                    data-dismiss="modal"
+                                                                                    aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <form action="{% url 'add' %} " method="post">
+                                                                            <input type="hidden"
+                                                                                   value="{{ category_list.number }}"
+                                                                                   name="current_page">
+                                                                            {% csrf_token %}
+                                                                            <div style="background-color: #f6f6f6"
+                                                                                 class="modal-body">
+                                                                                {% for attribute in item.attributes %}
+                                                                                    <div class="form-group row">
+                                                                                        <label for="ProdQuantity{{ item.product_ids.0 }}"
+                                                                                               class="col-sm-6 col-form-label">
+                                                                                            {{ attribute }}
+                                                                                        </label>
+                                                                                        <div class="col-sm-6">
+                                                                                            <input type="number"
+                                                                                                   class="form-control"
+                                                                                                   style="width: 100px;"
+                                                                                                   min="0"
+                                                                                                   name="ProdQuantity{{ item.product_ids.0 }}"
+                                                                                                   id="ProdQuantity{{ item.product_ids.0 }}"
+                                                                                                   placeholder="Qty.">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                {% endfor %}
+                                                                            </div>
+                                                                            <div style="background-color: #f6f6f6"
+                                                                                 class="modal-footer">
+                                                                                <button type="submit"
+                                                                                        class="btn btn-warning">
+                                                                                    Add to Cart
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+                        {% if category_list.has_other_pages %}
+                            <ul class="pagination">
+                                {% if category_list.has_previous %}
+                                    <li><a class="page-link"
+                                           href="?page={{ category_list.previous_page_number }}">&laquo;</a></li>
+                                {% else %}
+                                    <li class="disabled"><span class="page-link">&laquo;</span></li>
+                                {% endif %}
+                                {% for i in category_list.paginator.page_range %}
+                                    {% if category_list.number == i %}
+                                        <li class="page-item"><span class="page-link">{{ i }} <span
+                                                class="sr-only">(current)</span></span></li>
+                                    {% else %}
+                                        <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if category_list.has_next %}
+                                    <li><a class="page-link"
+                                           href="?page={{ category_list.next_page_number }}">&raquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="disabled"><span class="page-link">&raquo;</span></li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
                     <a class="btn btn-warning float-right" href="{% url 'cart' %}">
                         Proceed to Cart
                     </a>

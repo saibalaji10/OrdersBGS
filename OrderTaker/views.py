@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -40,9 +42,13 @@ def addtocart(request):
     # print('order_id:', request.session['order_id'])
     # print('customer_id', request.session['customer_id'])
     success = False
+    print('Hello')
     for key, value in request.POST.items():
+        print(key)
+        print(value)
         if key[:12] == "ProdQuantity" and value:
             pa_id = key[12:]
+            print(pa_id)
             try:
                 if int(value) != 0:
                     od, created = OrderDetails.objects.update_or_create(
@@ -52,14 +58,17 @@ def addtocart(request):
                     )
                     success = True
             except Exception as e:
+                print(e)
                 messages.error(request, 'Error adding item!', extra_tags='danger')
         if key == "current_page" and value:
             page = value
+
     if success:
         messages.success(request, 'Your item added to cart successfully!')
     request.session['customer_id'] = cust.id
     request.session['order_id'] = cust_order.id
-    return HttpResponseRedirect(reverse('home') + '?page=' + str(page))
+    return HttpResponseRedirect(reverse('categories') + '?page=' + str(page))
+
 
 def cart(request):
     context = {}
@@ -69,9 +78,11 @@ def cart(request):
         return render(request, 'OrderTaker/cart.html', context)
     return HttpResponseRedirect(reverse('home'))
 
+
 def deleteitem(request, order_item_id):
     OrderDetails.objects.filter(pk=order_item_id).delete()
     return HttpResponseRedirect(reverse('cart'))
+
 
 def placeorder(request):
     context = {}
@@ -107,6 +118,7 @@ def placeorder(request):
     request.session.flush()
     return HttpResponseRedirect(reverse('home'))
 
+
 def downloadpdf(request, order_id):
     order_items = OrderDetails.objects.filter(order_id=order_id)
     order_printer = OrderPrinter(order_items)
@@ -116,35 +128,8 @@ def downloadpdf(request, order_id):
     response['Content-Disposition'] = 'attachment; filename=' + file_name
     return response
 
+
 def home(request):
-    if 'customer_id' in request.session:
-        print("Logged in")
-        return categories(request)
-    print("Log in failed")
-    return render(request, 'OrderTaker/userdetails.html', {})
-
-def enter(request):
-    if request.method == 'POST':
-        username = request.POST.get('username', 'user')
-        number = request.POST.get('phonenumber', '9876543210')
-        customer = Customer(
-            name=username, number=number
-        )
-
-        customer_order = Order(
-            customer=customer
-        )
-        customer.save()
-        customer_order.save()
-
-        request.session['customer_id'] = customer.id
-        request.session['order_id'] = customer_order.id
-        return categories(request)
-
-    return home(request)
-# Create your views here.
-def categories(request):
-    context = {}
     config_list = Config.objects.all()
     mode = config_list.get(property__iexact='Control').value
     state = config_list.get(property__iexact='State').value
@@ -169,28 +154,67 @@ def categories(request):
             print('Time check complete, Website is not turned on')
             return render(request, 'OrderTaker/willbeback.html', {'mode': 'auto', 'start': start, 'end': end})
 
-    # In case of rendering orders page, getting data from models
-    pa_list = ProductAttribute.objects.filter(isVisible__exact='show')
+    if 'customer_id' in request.session:
+        print("Logged in")
+        return categories(request)
 
-    product_list = ProductAttribute.objects.filter(isVisible__exact='show').distinct('product')
+    print("Log in failed")
+    return render(request, 'OrderTaker/userdetails.html', {})
 
-    category_list = Category.objects.filter(isVisible__exact='show')
 
-    attribute_list = Attribute.objects.all()
+def enter(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', 'user')
+        number = request.POST.get('phonenumber', '9876543210')
+        customer = Customer(
+            name=username, number=number
+        )
 
-    if 'order_id' in request.session:
-        co_list = Category.objects.filter(categories__productattributes__order_id=request.session['order_id'])
-        cat_count = list(Category.objects.filter(categories__productattributes__order_id=request.session['order_id']).
-                         values('id','name').
-                         annotate(quantity=Sum('categories__productattributes__quantity')))
+        customer_order = Order(
+            customer=customer
+        )
+        customer.save()
+        customer_order.save()
 
-        context['co_list'] = co_list
-        context['cat_count'] = cat_count
-        print(co_list)
+        request.session['customer_id'] = customer.id
+        request.session['order_id'] = customer_order.id
+        return categories(request)
+
+    return home(request)
+
+
+# Create your views here.
+def categories(request):
+    context = {}
+
+    global product_list_full
+    product_list_full = list(
+        ProductAttribute.objects.filter(isVisible__exact='show').values('product', 'id', 'category__name',
+                                                                        'attribute__name'))
+    result = {}
+    for product_item in product_list_full:
+        if not product_item['category__name'] in result:
+            result[product_item['category__name']] = []
+        if not any(d['product'] == product_item['product'] for d in result[product_item['category__name']]):
+            indiv_product = {}
+            indiv_product['product'] = product_item['product']
+            indiv_product['product_ids'] = []
+            indiv_product['product_ids'].append(product_item['id'])
+            indiv_product['attributes'] = []
+            indiv_product['attributes'].append(product_item['attribute__name'])
+            result[product_item['category__name']].append(indiv_product)
+        else:
+            result_product_list = result[product_item['category__name']]
+            for a_dict in result_product_list:
+                if a_dict.get('product', '') == product_item['product']:
+                    a_dict['product_ids'].append(product_item['id'])
+                    a_dict['attributes'].append(product_item['attribute__name'])
+    print(result)
+    print("6")
+    result = OrderedDict(sorted(result.items()))
     page = request.GET.get('page', 1)
-
-    paginator = Paginator(category_list, 10)
-
+    result = list(result.items())
+    paginator = Paginator(result, 10)
     try:
         categories = paginator.page(page)
     except PageNotAnInteger:
@@ -199,12 +223,10 @@ def categories(request):
         categories = paginator.page(paginator.num_pages)
 
     context['category_list'] = categories
-    context['product_list'] = product_list
-    context['attribute_list'] = attribute_list
-    context['pa_list'] = pa_list
     context['message'] = request.session['message'] if 'message' in request.session else None
 
     return render(request, 'OrderTaker/index.html', context)
+
 
 def logout(request):
     request.session.flush()

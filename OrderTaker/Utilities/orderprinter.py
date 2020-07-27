@@ -87,7 +87,7 @@ class OrderPrinter(FPDF):
         self.set_font(FONT, '', BODY_FONT_SIZE)
         for item in self.orders_list:
             self.cell(18)
-            self.cell(90, CELL_HEIGHT, item.product_attribute.product.name, 1, 0, 'C')
+            self.cell(90, CELL_HEIGHT, item.product_attribute.product, 1, 0, 'C')
             self.cell(30, CELL_HEIGHT, item.product_attribute.attribute.name, 1, 0, 'C')
             self.cell(30, CELL_HEIGHT, str(item.quantity), 1, 0, 'C')
             self.ln()
