@@ -74,10 +74,8 @@
                                             <ul class="list-group">
                                                 {% for item in products_list %}
                                                     {% with forloop.counter as inner_counter %}
-                                                        <li class="list-group-item" data-toggle="modal"
-                                                            style="font-size: small;font-weight: bold"
-                                                            data-target="#attributeQuantity{{ item.product_ids.0 }}"
-                                                            role="button">
+                                                        <li class="list-group-item"
+                                                            style="font-size: small;font-weight: bold">
                                                             {{ item.product }}
                                                             {% for attribute in item.attributes %}
                                                                 <span class="badge badge-warning">
