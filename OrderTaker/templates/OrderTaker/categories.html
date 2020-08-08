@@ -1,41 +1,50 @@
 {% extends 'OrderTaker/base.html' %}
 {% load static %}
-
 {% block content %}
+
     {% if category_list %}
-        <div class="container" style="margin-top:30px">
-        <h3>Order online!</h3>
-        <p>
-            No more queues. Select your needs from the list and take it way in a flash. </p>
-        <br>
-        <div class="container mt-5">
-            <div class="row">
-                {% for category in category_list %}
-                    <div class="col-auto">
-                        <div class="card" >
-
-                            <img alt="Card image cap" class="card-img-top" src="{% static "brownrice.jpg" %}" >
-                            <div class="card-body">
-
-                                <h5 class="card-title"
-                                    style="display:block;text-overflow: ellipsis;width: 200px;overflow: hidden; white-space: nowrap;">{{ category.category_name }}</h5>
-                                <p class="card-text"
-                                   style="display:block;text-overflow: ellipsis;width: 200px;overflow: hidden; white-space: nowrap;">
-                                </p>
-
-
-                            </div>
-                            <a style="background-color: #0275d8; color: white"
-                               href="{% url 'products' category_id=category.category_id %}">
-                                <div class="card-footer" >
-                                    {{ category.category_name }}
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+        <script>
+            $(function () { // this will be called when the DOM is ready
+                $("#categorySearch").on("keyup", function () {
+                    const value = $(this).val().toLowerCase();
+                    $("#myContainer div").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            });
+        </script>
+        <div class="container"><h3>Order online!</h3>
+            <p>
+                No more queues. Select your needs from the list and take it way in a flash. </p>
             <br>
+
+            <div class="container " id="myContainer">
+                <label for="myInput"></label><input id="categorySearch" class="form-control" type="text" placeholder="Search Category">
+                <div class="row mt-2">
+                    {% for category in category_list %}
+
+                        <div class="col-auto">
+                            <div class="card">
+                                <a href="{% url 'products' category_id=category.category_id %}"
+                                   style="text-decorations:none; color:inherit;">
+
+                                    <img alt=" Card image cap" class="card-img-top" src="{% static "brownrice.jpg" %}">
+                                    <div class="card-body">
+
+                                    </div>
+
+                                    <div class="card-footer"
+                                         style="background: darkslateblue; color: white;font-size: small;text-align: center;">
+                                        {{ category.category_name }}
+                                    </div>
+                                </a>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+            </div>
         </div>
         <br>
         <br>

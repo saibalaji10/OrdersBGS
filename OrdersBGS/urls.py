@@ -13,20 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from OrderTaker import views
+from OrdersBGS import settings
 
 urlpatterns = [
     path('', views.home, name='home'),
     path('enter/', views.enter, name='enter'),
     path('logout/', views.logout, name='logout'),
     path('categories/', views.categories, name='categories'),
-    path('<int:category_id>/', views.products, name='products'),
+    path('category/<int:category_id>/', views.products, name='products'),
     path('add/', views.addtocart, name='add'),
     path('cart/', views.cart, name='cart'),
     path('placeorder/', views.placeorder, name='placeorder'),
-    path('<int:order_id>/downloadpdf/',views.downloadpdf, name='downloadpdf'),
+    path('<int:order_id>/downloadpdf/', views.downloadpdf, name='downloadpdf'),
     path('OrderTaker/', include('OrderTaker.urls')),
     path('admin/', admin.site.urls),
 ]

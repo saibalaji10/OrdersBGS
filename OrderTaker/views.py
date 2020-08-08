@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Order, Customer, OrderDetails, ProductAttribute, Config, Category, Attribute
@@ -14,6 +14,8 @@ import datetime
 
 
 def addtocart(request):
+    page = -1
+
     print(request)
     try:
         # Get Customer object for given session
@@ -45,6 +47,11 @@ def addtocart(request):
     for key, value in request.POST.items():
         print(key)
         print(value)
+        if key == "category" and value:
+            page = value
+
+        if page == -1:
+            return redirect('categories')
         if key[:12] == "ProdQuantity" and value:
             pa_id = key[12:]
             print(pa_id)
@@ -64,7 +71,7 @@ def addtocart(request):
         messages.success(request, 'Your item added to cart successfully!')
     request.session['customer_id'] = cust.id
     request.session['order_id'] = cust_order.id
-    return HttpResponseRedirect(reverse('categories'))
+    return redirect('products', category_id=page)
 
 
 def cart(request):
@@ -188,6 +195,7 @@ def products(request, category_id):
                                                                                'id',
                                                                                'category__name',
                                                                                'attribute__name'))
+    category_id_arg = category_id
     if len(product_list_full) <= 0:
         return
 
@@ -213,6 +221,7 @@ def products(request, category_id):
     print(result_product_list)
     context['product_list'] = result_product_list
     context['category'] = category_name
+    context['category_id'] = category_id_arg
 
     return render(request, 'OrderTaker/products.html', context)
 
@@ -227,15 +236,20 @@ def categories(request):
                                                                          ))
     result_category_list = []
     for indiv_category in category_list_full:
-        indiv_category_dict = {}
-        category_name = indiv_category['category__name']
-        category_id = indiv_category['category__id']
-        indiv_category_dict['category_name'] = category_name
-        indiv_category_dict['category_id'] = category_id
-        result_category_list.append(indiv_category_dict)
+        if not any(d['category_id'] == indiv_category['category__id'] for d in result_category_list):
 
-    res_list = {frozenset(item.items()): item for item in result_category_list}.values()
-    context['category_list'] = res_list
+            indiv_category_dict = {}
+            category_name = indiv_category['category__name']
+            if category_name == '-':
+                continue
+            category_id = indiv_category['category__id']
+            indiv_category_dict['category_name'] = category_name
+            indiv_category_dict['category_id'] = category_id
+            result_category_list.append(indiv_category_dict)
+
+    sorted_category_list = sorted(result_category_list, key=lambda k: k['category_name'])
+
+    context['category_list'] = sorted_category_list
     context['message'] = request.session['message'] if 'message' in request.session else None
 
     return render(request, 'OrderTaker/categories.html', context)

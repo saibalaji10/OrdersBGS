@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -26,8 +25,6 @@ SECRET_KEY = 'omwqyn3ywq2ihf-$2y1=v!#q4e@gc83!ilhf(%904eem-t*y%b'
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.0.100,','127.0.0.1','192.168.1.8','0.0.0.0', 'localhost']
-
-
 
 # Application definition
 
@@ -74,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'OrdersBGS.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -109,17 +105,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE =  'Asia/Kolkata'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_TZ = True
 
-#For email
+# For email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_USE_TLS = True
@@ -132,7 +127,7 @@ EMAIL_HOST_PASSWORD = 'baju10ba'
 
 EMAIL_PORT = 587
 
-#This did the trick
+# This did the trick
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Static files (CSS, JavaScript, Images)
@@ -144,3 +139,4 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     'OrdersBGS/static/'
 ]
+
