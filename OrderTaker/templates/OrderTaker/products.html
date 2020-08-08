@@ -1,0 +1,57 @@
+{% extends 'OrderTaker/base.html' %}
+
+{% block content %}
+    {% if product_list %}
+        <div class="container" style="margin-top:10px">
+            <h3>{{ category }}</h3>
+            <div class="container mt-5">
+                {% for product in product_list %}
+                    <div class="card mt-3">
+
+                        <div class="card-body">
+                            <form action="{% url 'add' %} " method="post">
+                                {% csrf_token %}
+                                <h5 class="card-title"
+                                    style="display:block;text-overflow: ellipsis;width: 200px;overflow: hidden; white-space: nowrap;">{{ product.product_name }}</h5>
+                                <input type="hidden"
+                                       value="{{ product.product_name }}"
+                                       name="current_page">
+                                <div class="row">
+                                    {% with product_attribute_list=product.product_attribute_list %}
+                                        {% for item in product_attribute_list %}
+                                            {% with forloop.counter as counter %}
+                                                <div class="col-auto">
+                                                    <input type="number"
+                                                           id="ProdQuantity{{ item.product_id }}"
+                                                           class="form-control"
+                                                           style="width: 100px;"
+                                                           min="0"
+                                                           name="ProdQuantity{{ item.product_id }}"
+                                                           placeholder="{{ item.attribute }}">
+                                                </div>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                </div>
+                                <br>
+
+                                <button type="submit"
+                                        class="btn btn-warning">
+                                    Add to Cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <br>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+    {% else %}
+        <p>No categories are available.</p>
+    {% endif %}
+{% endblock %}

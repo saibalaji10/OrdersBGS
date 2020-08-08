@@ -14,7 +14,7 @@ import datetime
 
 
 def addtocart(request):
-    page = "1"
+    print(request)
     try:
         # Get Customer object for given session
         cust = Customer.objects.get(
@@ -42,7 +42,6 @@ def addtocart(request):
     # print('order_id:', request.session['order_id'])
     # print('customer_id', request.session['customer_id'])
     success = False
-    print('Hello')
     for key, value in request.POST.items():
         print(key)
         print(value)
@@ -60,14 +59,12 @@ def addtocart(request):
             except Exception as e:
                 print(e)
                 messages.error(request, 'Error adding item!', extra_tags='danger')
-        if key == "current_page" and value:
-            page = value
 
     if success:
         messages.success(request, 'Your item added to cart successfully!')
     request.session['customer_id'] = cust.id
     request.session['order_id'] = cust_order.id
-    return HttpResponseRedirect(reverse('categories') + '?page=' + str(page))
+    return HttpResponseRedirect(reverse('categories'))
 
 
 def cart(request):
@@ -184,48 +181,64 @@ def enter(request):
 
 
 # Create your views here.
+def products(request, category_id):
+    context = {}
+    product_list_full = list(
+        ProductAttribute.objects.filter(category_id__exact=category_id).values('product',
+                                                                               'id',
+                                                                               'category__name',
+                                                                               'attribute__name'))
+    if len(product_list_full) <= 0:
+        return
+
+    category_name = product_list_full[0]['category__name']
+    print(category_name)
+
+    result = {}
+    result_product_list = []
+    for product_item in product_list_full:
+        if not any(d['product_name'] == product_item['product'] for d in result_product_list):
+            product_dict = {'product_name': product_item['product'], 'product_attribute_list': []}
+            product_attribute_dict = {'product_id': product_item['id'], 'attribute': product_item['attribute__name']}
+            product_dict['product_attribute_list'].append(product_attribute_dict)
+            result_product_list.append(product_dict)
+
+        else:
+            for product_dict in result_product_list:
+                if product_dict.get('product_name', '') == product_item['product']:
+                    product_attribute_dict = {'product_id': product_item['id'],
+                                              'attribute': product_item['attribute__name']}
+                    product_dict['product_attribute_list'].append(product_attribute_dict)
+
+    print(result_product_list)
+    context['product_list'] = result_product_list
+    context['category'] = category_name
+
+    return render(request, 'OrderTaker/products.html', context)
+
+
+# Create your views here.
 def categories(request):
     context = {}
 
-    global product_list_full
-    product_list_full = list(
-        ProductAttribute.objects.filter(isVisible__exact='show').values('product', 'id', 'category__name',
-                                                                        'attribute__name'))
-    result = {}
-    for product_item in product_list_full:
-        if not product_item['category__name'] in result:
-            result[product_item['category__name']] = []
-        if not any(d['product'] == product_item['product'] for d in result[product_item['category__name']]):
-            indiv_product = {}
-            indiv_product['product'] = product_item['product']
-            indiv_product['product_ids'] = []
-            indiv_product['product_ids'].append(product_item['id'])
-            indiv_product['attributes'] = []
-            indiv_product['attributes'].append(product_item['attribute__name'])
-            result[product_item['category__name']].append(indiv_product)
-        else:
-            result_product_list = result[product_item['category__name']]
-            for a_dict in result_product_list:
-                if a_dict.get('product', '') == product_item['product']:
-                    a_dict['product_ids'].append(product_item['id'])
-                    a_dict['attributes'].append(product_item['attribute__name'])
-    print(result)
-    print("6")
-    result = OrderedDict(sorted(result.items()))
-    page = request.GET.get('page', 1)
-    result = list(result.items())
-    paginator = Paginator(result, 10)
-    try:
-        categories = paginator.page(page)
-    except PageNotAnInteger:
-        categories = paginator.page(1)
-    except EmptyPage:
-        categories = paginator.page(paginator.num_pages)
+    category_list_full = list(
+        ProductAttribute.objects.filter(isVisible__iexact='show').values('category__id',
+                                                                         'category__name',
+                                                                         ))
+    result_category_list = []
+    for indiv_category in category_list_full:
+        indiv_category_dict = {}
+        category_name = indiv_category['category__name']
+        category_id = indiv_category['category__id']
+        indiv_category_dict['category_name'] = category_name
+        indiv_category_dict['category_id'] = category_id
+        result_category_list.append(indiv_category_dict)
 
-    context['category_list'] = categories
+    res_list = {frozenset(item.items()): item for item in result_category_list}.values()
+    context['category_list'] = res_list
     context['message'] = request.session['message'] if 'message' in request.session else None
 
-    return render(request, 'OrderTaker/index.html', context)
+    return render(request, 'OrderTaker/categories.html', context)
 
 
 def logout(request):

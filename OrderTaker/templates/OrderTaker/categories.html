@@ -1,0 +1,43 @@
+{% extends 'OrderTaker/base.html' %}
+
+{% block content %}
+    {% if category_list %}
+        <div class="container" style="margin-top:30px">
+        <h3>Order online!</h3>
+        <p>
+            No more queues. Select your needs from the list and take it way in a flash. </p>
+        <br>
+        <div class="container mt-5">
+            <div class="row">
+                {% for category in category_list %}
+                    <div class="col-auto">
+                        <div class="card">
+
+                            <div class="card-body">
+
+                                <h5 class="card-title"
+                                    style="display:block;text-overflow: ellipsis;width: 200px;overflow: hidden; white-space: nowrap;">{{ category.category_name }}</h5>
+                                <p class="card-text"
+                                   style="display:block;text-overflow: ellipsis;width: 200px;overflow: hidden; white-space: nowrap;">
+                                    </p>
+                                <a href="{% url 'products' category_id=category.category_id %}">
+                                    <div class="bg-primary text-white"
+                                         role="button"
+                                         style="display:block;text-overflow: ellipsis;width: 200px;overflow: hidden; white-space: nowrap;text-align: center">{{ category.category_name }}</div>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+    {% else %}
+        <p>No categories are available.</p>
+    {% endif %}
+{% endblock %}
