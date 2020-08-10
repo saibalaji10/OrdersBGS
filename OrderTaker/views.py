@@ -15,6 +15,9 @@ import datetime
 def register(request):
     template = 'OrderTaker/register.html'
 
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('categories'))
+
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -96,7 +99,7 @@ def enter(request):
             messages.success(request, f' Welcome {request.user.name} !!')
             return redirect('categories')
         else:
-            messages.info(request, 'Account does not exist please sign in..')
+            messages.info(request, 'Your username or password may be incorrect..Please try again')
 
     return render(request, 'OrderTaker/login.html')
 
