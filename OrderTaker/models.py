@@ -74,6 +74,7 @@ class BGSUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+
 class Order(models.Model):
     date = models.DateTimeField('Order Date', default=timezone.now)
     customer = models.ForeignKey(BGSUser, related_name='users', on_delete=models.CASCADE)

@@ -134,7 +134,7 @@ class ConfigResources(resources.ModelResource):
 
 class OrderAdmin(admin.ModelAdmin):
     # ...
-    list_display = ('id', 'customer', 'date')
+    list_display = ('id', 'customer', 'date', 'cart')
     search_fields = ['customer__name', 'id']
 
 

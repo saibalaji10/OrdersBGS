@@ -21,7 +21,8 @@ def register(request):
             if BGSUser.objects.filter(phone=form.cleaned_data['phone']).exists():
                 return render(request, template, {
                     'form': form,
-                    'error_message': 'Account already exists.'
+                    'error_message': 'Account already exists. Please sign in to your account. If not, use a different '
+                                     'phone number '
                 })
             elif form.cleaned_data['password'] != form.cleaned_data['password_repeat']:
                 return render(request, template, {
@@ -86,15 +87,13 @@ def enter(request):
         user = authenticate(request, username=phone, password=password)
         if user is not None:
             auth.login(request, user)
-            customer_order = Order(
+            customer_order, is_created = Order.objects.get_or_create(
                 customer=request.user,
-                cart=True
+                cart=True,
             )
-            customer_order.save()
-
-            request.session['order_id'] = customer_order.id
-            print(request.session['order_id'])
-            messages.success(request, f' welcome {request.user.name} !!')
+            if is_created:
+                customer_order.save()
+            messages.success(request, f' Welcome {request.user.name} !!')
             return redirect('categories')
         else:
             messages.info(request, 'Account does not exist please sign in..')
@@ -187,17 +186,13 @@ def add_to_cart(request):
     cust = request.user
     # Get Order object for given session
 
-    if 'order_id' not in request.session or request.session['order_id'] == '':
-        cust_order = Order(
-            customer=cust
-        )
-        cust_order.save()
-        request.session['order_id'] = cust_order.id
-    else:
-        cust_order = Order.objects.get(
-            pk=request.session['order_id'],
-            customer=cust,
-        )
+    customer_order, is_created = Order.objects.get_or_create(
+        customer=request.user,
+        cart=True
+    )
+
+    if is_created:
+        customer_order.save()
 
     success = False
     for key, value in request.POST.items():
@@ -215,7 +210,7 @@ def add_to_cart(request):
                 if int(value) != 0:
                     od, created = OrderDetails.objects.update_or_create(
                         product_attribute=ProductAttribute.objects.get(pk=pa_id),
-                        order=cust_order,
+                        order=customer_order,
                         defaults={'quantity': int(value)},
                     )
                     success = True
@@ -231,9 +226,8 @@ def add_to_cart(request):
 @login_required
 def cart(request):
     context = {}
-    order_items = []
-    if 'order_id' in request.session or request.session['order_id'] != '':
-        order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
+    customer_order, is_created = Order.objects.get_or_create(customer_id=request.user.id, cart=True)
+    order_items = OrderDetails.objects.filter(order_id=customer_order.id)
     context['order_items'] = order_items
     return render(request, 'OrderTaker/cart.html', context)
 
@@ -268,6 +262,7 @@ def placeorder(request):
     context = {}
 
     if request.method == 'POST':
+        customer_order, is_created = Order.objects.get_or_create(customer_id=request.user.id, cart=True)
         for key, value in request.POST.items():
             if key[:9] == "orderitem" and value:
                 od_id = key[9:]
@@ -277,31 +272,30 @@ def placeorder(request):
                 except Exception as e:
                     print(e)
 
-            if key == 'commentsTextArea' and value and 'order_id' in request.session:
+            if key == 'commentsTextArea' and value:
                 try:
-                    Order.objects.filter(pk=request.session['order_id']).update(additional_comments=value,
-                                                                                cart=False)
+                    Order.objects.filter(pk=customer_order.id).update(additional_comments=value,
+                                                                      cart=False)
                 except Exception as e:
                     print(e)
             else:
                 try:
-                    Order.objects.filter(pk=request.session['order_id']).update(cart=False)
+                    Order.objects.filter(pk=customer_order.id).update(cart=False)
                 except Exception as e:
                     print(e)
 
-        if 'order_id' in request.session:
-            order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
-            order_printer = OrderPrinter(order_items)
-            print('Generating Order pdf')
-            order_printer.execute_action()
+        order_items = OrderDetails.objects.filter(order_id=customer_order.id)
+        order_printer = OrderPrinter(order_items)
+        print('Generating Order pdf')
+        order_printer.execute_action()
 
         context['order_message'] = Config.objects.get(property__iexact='Message')
-        context['order_id'] = request.session['order_id']
+        context['order_id'] = customer_order.id
         context['customer'] = request.user.name
-        request.session['order_id'] = ''
+        new_current_order = Order(customer=request.user, cart=True)
+        new_current_order.save()
         return render(request, 'OrderTaker/thankyou.html', context)
 
-    request.session.flush()
     return HttpResponseRedirect(reverse('home'))
 
 
