@@ -32,10 +32,18 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="nav navbar-nav ml-auto">
+
                 <li class="nav-item">
                     <a class="nav-item nav-link" style="color: #fff9d8" href="{% url 'cart' %}">
                         <strong>
                             <i class="fa fa-shopping-cart"></i> Cart
+                        </strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-item nav-link" style="color: #fff9d8" href="{% url 'customer_orders' %}">
+                        <strong>
+                            <i class="fa fa-user-circle"></i> Orders
                         </strong>
                     </a>
                 </li>

@@ -1,0 +1,53 @@
+{% extends 'OrderTaker/base.html' %}
+
+{% block content %}
+    <div class="container" style="margin-top:30px">
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <a href="{% url 'home' %}" class="previous">
+                    <strong>&lsaquo;
+                        Back to Shopping
+                    </strong>
+                </a>
+                <br><br>
+                <h3>Your Orders</h3>
+                {% if orders %}
+                    {% csrf_token %}
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Additional Comments</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                            <th>Receipt</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in orders %}
+                            <tr onclick="{% url 'cart' %}">
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.additional_comments }}</td>
+                                <td>{{ order.date }}</td>
+                                <td>
+                                    <a href="{% url 'order' order_id=order.id %}">
+                                        View Items
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'downloadpdf' order.id %}">
+                                        View Receipt
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    </div>
+                    </div>
+                    </div>
+                {% else %}
+                    <p>Order Items not found!</p>
+                {% endif %}
+{% endblock %}
