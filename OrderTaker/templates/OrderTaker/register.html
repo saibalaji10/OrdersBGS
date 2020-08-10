@@ -1,0 +1,60 @@
+{% extends 'OrderTaker/inactivebase.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <form action="{% url 'register' %}" method="post">
+                    {% csrf_token %}
+                    <h3>Welcome To Bombay General Stores</h3>
+                    <hr>
+                    {% if error_message %}
+                        <div class="alert alert-danger alert-dismissible fade show"
+                             role="alert">
+                            {{ error_message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <div class="form-group clearfix">
+                        <label for="{{ form.name.id_for_label }}"
+                               class="col-md-4 control-label text-right"></label>
+                        <div class="col-md-7">
+                            {{ form.name }}
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label for="{{ form.phone_number.id_for_label }}"
+                               class="col-md-4 control-label text-right"></label>
+                        <div class="col-md-7">
+                            {{ form.phone }}
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label for="{{ form.password.id_for_label }}"
+                               class="col-md-4 control-label text-right"></label>
+                        <div class="col-md-7">
+                            {{ form.password }}
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label for="{{ form.password_repeat.id_for_label }}"
+                               class="col-md-4 control-label text-right"></label>
+                        <div class="col-md-7">
+                            {{ form.password_repeat }}
+                        </div>
+                    </div>
+                    <p id="gotoregister" class="form-text text-muted">
+                        Already a member .. Please <a href="{% url 'login' %}"> Login </a>
+                    </p>
+                    <div class="col-md-6 col-md-offset-4">
+                        <input type="submit" value="Register" class="btn btn-success">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

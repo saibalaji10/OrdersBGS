@@ -13,13 +13,26 @@
                 });
             });
         </script>
-        <div class="container"><h3>Order online!</h3>
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}  alert-dismissible fade show"
+                         role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}<h3>Order online!</h3>
+
             <p>
                 No more queues. Select your needs from the list and take it way in a flash. </p>
             <br>
 
             <div class="container " id="myContainer">
-                <label for="myInput"></label><input id="categorySearch" class="form-control" type="text" placeholder="Search Category">
+                <label for="myInput"></label><input id="categorySearch" class="form-control" type="text"
+                                                    placeholder="Search Category">
                 <div class="row mt-2">
                     {% for category in category_list %}
 
@@ -29,10 +42,6 @@
                                    style="text-decorations:none; color:inherit;">
 
                                     <img alt=" Card image cap" class="card-img-top" src="{% static "brownrice.jpg" %}">
-                                    <div class="card-body">
-
-                                    </div>
-
                                     <div class="card-footer"
                                          style="background: darkslateblue; color: white;font-size: small;text-align: center;">
                                         {{ category.category_name }}
