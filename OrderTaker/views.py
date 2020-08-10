@@ -232,7 +232,7 @@ def add_to_cart(request):
 def cart(request):
     context = {}
     order_items = []
-    if 'order_id' not in request.session or request.session['order_id'] != '':
+    if 'order_id' in request.session or request.session['order_id'] != '':
         order_items = OrderDetails.objects.filter(order_id=request.session['order_id'])
     context['order_items'] = order_items
     return render(request, 'OrderTaker/cart.html', context)
